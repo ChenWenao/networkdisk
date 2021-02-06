@@ -5,7 +5,7 @@ import java.util.Date;
 public class file {
     private int id;
     private int userId;
-    private String filename;
+    private String fileName;
     private Date uploadTime;
     private Date updateTime;
     private String parentPath;
@@ -32,12 +32,12 @@ public class file {
         this.userId = userId;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public Date getUploadTime() {
