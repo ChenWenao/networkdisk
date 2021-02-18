@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 public class FIleRepository {
     @Autowired
     private JdbcTemplate filetemplate;
-    private FileRowMapper fileRowMapper;
+    private FileRowMapper fileRowMapper=new FileRowMapper();
 
 
 }

@@ -1,33 +1,31 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta charset="utf-8">
     <title>网络云盘</title>
     <link rel="stylesheet" href="/css/loginStyle.css">
+    <script src="/js/jquery.min.js"></script>
+
 </head>
 
 <body>
 <div class="content">
     <div class="form sign-in">
-        <form th:action="@{/OnlineCommunity/login}" method="post" th:object="${User}">
+        <form id="logUser" name="loginForm">
             <h2>欢迎回来</h2>
             <label>
-                <span th:text="${loginError2}"></span>
-            </label>
-            <label>
                 <span>账号</span>
-                <input type="id" name="id"/>
+                <input id="logUsername" name="username"/>
             </label>
             <label>
                 <span>密码</span>
-                <input type="password" name="password"/>
+                <input id="logPassword" name="password"/>
             </label>
             <p class="forgot-pass"><a href="/OnlineCommunity/login/passwordBack">忘记密码？</a></p>
             <label>
                 <span th:text="${loginError1}"></span>
             </label>
-            <button type="submit" class="submit">登 录</button>
+            <button type="button" class="submit" onclick="login()">登 录</button>
         </form>
     </div>
     <div class="sub-cont">
@@ -46,30 +44,96 @@
             </div>
         </div>
         <div class="form sign-up">
-            <form id="regUser">
+            <form id="regUser" name="registerForm">
                 <h2>立即注册</h2>
                 <label>
                     <span>账号</span>
-                    <input id="regUsername"  name="id"/>
+                    <input id="regUsername" name="username"/>
                 </label>
                 <label>
                     <span>密码</span>
-                    <input id="regPassword"  name="password"/>
+                    <input id="regPassword" name="password"/>
                 </label>
                 <label>
                     <span>邮箱</span>
-                    <input id="regEmail"  name="name"/>
+                    <input id="regEmail" name="email"/>
                 </label>
                 <label>
                     <span>电话号码</span>
-                    <input id="regPhone" name="phoneNumber"/>
+                    <input id="regPhone" name="phone"/>
                 </label>
-                <button type="button" class="submit">注 册</button>
+                <button type="button" class="submit" onclick="register()">注 册</button>
             </form>
         </div>
     </div>
 </div>
 <script src="/js/loginScript.js"></script>
+<script>
+    function indexLogin() {
+        window.location.href = "login";
+    }
+
+    function register() {
+        if ($("#regUsername").value === '') {
+            alert("用户名不能为空，请重新输入！");
+            $("#regUsername").focus();
+            return;
+        }
+        if ($("#regEmail").value === '') {
+            alert("邮箱不能为空，请重新输入！");
+            $("#regEmail").focus();
+            return;
+        }
+        if ($("#regPhone").value === '') {
+            alert("电话号码不能为空，请重新输入！");
+            $("#regPhone").focus();
+            return;
+        }
+        //使用jquery的serializeArray方法，和springBoot的自动参数绑定
+        var formData = $("#regUser").serializeArray();
+        $.ajax({
+            url: 'register',
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                alert(data);
+                setTimeout("indexLogin()", 1500);
+            }
+        })
+    }
+
+    function login() {
+        if ($("#logUsername").value === '') {
+            alert("用户名不能为空，请重新输入！");
+            $("#logUsername").focus();
+            return;
+        }
+        if ($("#logPassword").value === '') {
+            alert("密码不能为空，请重新输入！");
+            $("#logPassword").focus();
+            return;
+        }
+        //使用jquery的serializeArray方法，和springBoot的自动参数绑定
+        var formData = $("#logUser").serializeArray();
+        $.ajax({
+            url: 'login',
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                if (data == "用户名不存在，请注册！") {
+                    alert(data);
+                } else if (data == "用户名或密码错误，请重新输入！") {
+                    alert(data);
+                    $("#logPassword").val("");
+                    $("#logPassword").focus();
+                } else {
+                    alert(data);
+                    window.location.href = "index"
+                }
+            }
+        })
+    }
+</script>
 </body>
 
 </html>
