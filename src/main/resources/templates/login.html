@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <title>网络云盘</title>
@@ -22,9 +21,6 @@
                 <input id="logPassword" name="password"/>
             </label>
             <p class="forgot-pass"><a href="/OnlineCommunity/login/passwordBack">忘记密码？</a></p>
-            <label>
-                <span th:text="${loginError1}"></span>
-            </label>
             <button type="button" class="submit" onclick="login()">登 录</button>
         </form>
     </div>
@@ -74,17 +70,17 @@
     }
 
     function register() {
-        if ($("#regUsername").value === '') {
+        if ($("#regUsername").val() == '') {
             alert("用户名不能为空，请重新输入！");
             $("#regUsername").focus();
             return;
         }
-        if ($("#regEmail").value === '') {
+        if ($("#regEmail").val() == '') {
             alert("邮箱不能为空，请重新输入！");
             $("#regEmail").focus();
             return;
         }
-        if ($("#regPhone").value === '') {
+        if ($("#regPhone").val() == '') {
             alert("电话号码不能为空，请重新输入！");
             $("#regPhone").focus();
             return;
@@ -96,19 +92,28 @@
             type: 'POST',
             data: formData,
             success: function (data) {
-                alert(data);
-                setTimeout("indexLogin()", 1500);
+                if (data==false){
+                    alert("当前用户已存在，请重新输入！");
+                    $("#regUsername").val("");
+                    $("#regPassword").val("");
+                    $("#regEmail").val("");
+                    $("#regPhone").val("");
+                    $("#regUsername").focus();
+                }else {
+                    alert("注册成功！");
+                    setTimeout("indexLogin()", 1500);
+                }
             }
         })
     }
 
     function login() {
-        if ($("#logUsername").value === '') {
+        if ($("#logUsername").val() == '') {
             alert("用户名不能为空，请重新输入！");
             $("#logUsername").focus();
             return;
         }
-        if ($("#logPassword").value === '') {
+        if ($("#logPassword").val() == '') {
             alert("密码不能为空，请重新输入！");
             $("#logPassword").focus();
             return;
@@ -120,15 +125,13 @@
             type: 'POST',
             data: formData,
             success: function (data) {
-                if (data == "用户名不存在，请注册！") {
-                    alert(data);
-                } else if (data == "用户名或密码错误，请重新输入！") {
-                    alert(data);
+                if (data == false) {
+                    alert("用户名或密码错误，请重新输入！");
                     $("#logPassword").val("");
                     $("#logPassword").focus();
                 } else {
-                    alert(data);
-                    window.location.href = "index"
+                    alert("登录成功！");
+                    window.location.href = "homepage"
                 }
             }
         })

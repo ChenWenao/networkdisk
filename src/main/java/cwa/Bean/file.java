@@ -3,18 +3,22 @@ package cwa.Bean;
 import java.util.Date;
 
 public class file {
+    //文件表
     private int id;
     private int userId;
     private String fileName;
     private Date uploadTime;
     private Date updateTime;
-    private String parentPath;
-    private String parent;
     private String fileType;
     private int fileSize;
     private int fileStatus;
-    private String filePath;
+    private String fileLocation;
 
+    //文件关系表
+    private int file_userId;
+    private int file_parentId;
+    private String file_parentPath;
+    private boolean file_kind;
 
     public int getId() {
         return id;
@@ -56,22 +60,6 @@ public class file {
         this.updateTime = updateTime;
     }
 
-    public String getParentPath() {
-        return parentPath;
-    }
-
-    public void setParentPath(String parentPath) {
-        this.parentPath = parentPath;
-    }
-
-    public String getParent() {
-        return parent;
-    }
-
-    public void setParent(String parent) {
-        this.parent = parent;
-    }
-
     public String getFileType() {
         return fileType;
     }
@@ -96,13 +84,44 @@ public class file {
         this.fileStatus = fileStatus;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getFileLocation() {
+        return fileLocation;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
     }
 
+    public int getFile_userId() {
+        return file_userId;
+    }
+
+    public void setFile_userId(int file_userId) {
+        this.file_userId = file_userId;
+    }
+
+    public int getFile_parentId() {
+        return file_parentId;
+    }
+
+    public void setFile_parentId(int file_parentId) {
+        this.file_parentId = file_parentId;
+    }
+
+    public String getFile_parentPath() {
+        return file_parentPath;
+    }
+
+    public void setFile_parentPath(String file_parentPath) {
+        this.file_parentPath = file_parentPath;
+    }
+
+    public boolean isFile_kind() {
+        return file_kind;
+    }
+
+    public void setFile_kind(boolean file_kind) {
+        this.file_kind = file_kind;
+    }
 
 }

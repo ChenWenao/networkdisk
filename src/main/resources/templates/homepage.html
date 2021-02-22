@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<html xmlns:th="http://localhost:8765/user-service/css/indexStyle.css">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>网盘</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default navbar-static-top" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1"><span
+                            class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span
+                            class="icon-bar"></span><span class="icon-bar"></span></button>
+                    <a class="navbar-brand ui-state-hover" th:text="'剩余空间：'+${#numbers.formatDecimal(currentUser.dataMax/1048576,1,2)}+' MB'"></a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input class="form-control" type="text"/>
+                        </div>
+                        <button type="submit" class="btn btn-default">搜索（未完成）</button>
+                        <button type="button" onclick="newFileFold()" id="newFileFoldButton" class="btn btn-default">
+                            新建文件夹
+                        </button>
+                        <input type="file" id="uploadFileInput" onclick="uploadFile()" style="display:none"/>
+                        <button type="button" onclick="chooseFile()" id="uploadFileButton" class="btn btn-default">
+                            上传文件
+                        </button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" th:text="${currentUser.username}"><strong
+                                    class="caret"></strong></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">Action</a>
+                                </li>
+                                <li>
+                                    <a href="#">Another action</a>
+                                </li>
+                                <li>
+                                    <a href="#">Something else here</a>
+                                </li>
+                                <li class="divider">
+                                </li>
+                                <li>
+                                    <a href="#">购买额外空间（暂未完成）</a>
+                                </li>
+                                <li class="divider">
+                                </li>
+                                <li>
+                                    <a onclick="logout()">登出</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        编号
+                    </th>
+                    <th>
+                        产品
+                    </th>
+                    <th>
+                        交付时间
+                    </th>
+                    <th>
+                        状态
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        TB - Monthly
+                    </td>
+                    <td>
+                        01/04/2012
+                    </td>
+                    <td>
+                        Default
+                    </td>
+                </tr>
+                <tr class="success">
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        TB - Monthly
+                    </td>
+                    <td>
+                        01/04/2012
+                    </td>
+                    <td>
+                        Approved
+                    </td>
+                </tr>
+                <tr class="error">
+                    <td>
+                        2
+                    </td>
+                    <td>
+                        TB - Monthly
+                    </td>
+                    <td>
+                        02/04/2012
+                    </td>
+                    <td>
+                        Declined
+                    </td>
+                </tr>
+                <tr class="warning">
+                    <td>
+                        3
+                    </td>
+                    <td>
+                        TB - Monthly
+                    </td>
+                    <td>
+                        03/04/2012
+                    </td>
+                    <td>
+                        Pending
+                    </td>
+                </tr>
+                <tr class="info">
+                    <td>
+                        4
+                    </td>
+                    <td>
+                        TB - Monthly
+                    </td>
+                    <td>
+                        04/04/2012
+                    </td>
+                    <td>
+                        Call in to confirm
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav class="navbar navbar-default navbar-fixed-bottom">
+            <div class="btn-group btn-group-lg col-md-6 col-md-offset-4">
+                <button class="btn btn-default" type="button"><em class="glyphicon glyphicon-align-left"></em> 左
+                </button>
+                <button class="btn btn-default" type="button"><em class="glyphicon glyphicon-align-center"></em>
+                    中
+                </button>
+                <button class="btn btn-default" type="button"><em class="glyphicon glyphicon-align-right"></em>
+                    右
+                </button>
+                <button class="btn btn-default" type="button"><em
+                        class="glyphicon glyphicon-align-justify"></em> 全
+                </button>
+            </div>
+        </nav>
+    </div>
+</div>
+<script>
+    function logout() {
+        $.ajax({
+            url: 'logout',
+            type: 'GET',
+            success: function (data) {
+                if (data == true) {
+                    alert("登出成功！");
+                    setTimeout("indexLogin()", 1500);
+                    window.location.reload();
+                } else {
+                    alert("未知错误，登出失败！");
+                }
+            }
+        })
+    }
+
+
+    function chooseFile() {
+        document.getElementById("uploadFile").click();
+    }
+
+    //新建文件夹，未完工！
+    function newFileFold() {
+        var foldName = prompt("请输入文件夹名称：", "");
+        if (foldName!=null) {
+            $.ajax({
+                url:'/File/newFileFold/'+foldName,
+                type:'GET'
+            })
+
+        }else {
+            alert("文件夹名称不可为空！");
+        }
+
+    }
+
+    //上传文件，未完工！
+    function uploadFile() { //在这里进行ajax 文件上传 用户的信息
+        var uploadFile = $("input[id='uploadFile']").val();//用户文件内容(文件)
+        // 判断文件是否为空
+        if (uploadFile == "") {
+            alert("请选择上传的目标文件! ")
+            return false;
+        }
+        //判断文件类型,我这里根据业务需求判断的是Excel文件
+        // var fileName1 = uploadFile.substring(uploadFile.lastIndexOf(".") + 1).toLowerCase();
+        // if(fileName1 != "xls" && fileName1 !="xlsx"){
+        //     alert("请选择Execl文件!");
+        //     return false;
+        // }
+        //判断文件大小
+        var size = $("input[name='uploadFile']")[0].files[0].size;
+        if (size > 1073741824) {
+            alert("上传文件不能大于1Gb!");
+            return false;
+        }
+        bool = true;
+        var type = "file";
+        var formData = new FormData();//这里需要实例化一个FormData来进行文件上传
+        formData.append(type, $("#uploadFile")[0].files[0]);
+        $.ajax({
+            type: "post",
+            url: "uploadFile",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data == "error") {
+                    alert("文件提交失败!");
+                } else {
+                    alert("文件上传成功!");
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
+
+

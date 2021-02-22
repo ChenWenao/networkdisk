@@ -15,10 +15,10 @@ public class UserService {
     private UserRepository userRepository;
 
     //增
-    public String addNewUser(user user) throws NoSuchAlgorithmException {
+    public boolean addNewUser(user user) throws NoSuchAlgorithmException {
         user userSelect = userRepository.selectOneUser(user);
         if (userSelect != null)
-            return "当前用户已注册，请登录！";
+            return false;
         else {
             //加密密码
             MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -34,8 +34,8 @@ public class UserService {
 
 //改
 
-//查
-    public String loginCheck(user user) throws NoSuchAlgorithmException {
+    //查
+    public user loginCheck(user user) throws NoSuchAlgorithmException {
         //加密密码
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         md5.update(user.getPassword().getBytes());
@@ -44,12 +44,11 @@ public class UserService {
         //查找用户
         user userSelect = userRepository.selectOneUser(user);
 
-        if (userSelect == null)
-            return "用户名不存在，请注册！";
-        else if (!userSelect.getPassword().equals(user.getPassword()))
-            return "用户名或密码错误，请重新输入！";
-        else
-            return "登录成功！";
+        if (userSelect == null || !userSelect.getPassword().equals(user.getPassword())) {
+            return null;
+        } else {
+            return userSelect;
+        }
     }
 }
 

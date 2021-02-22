@@ -8,9 +8,17 @@ public class user {
     private String password;
     private String email;
     private String phone;
-    private String idCard;
     private Date createTime;
+    private float dataSize;
+    private float dataMax;
 
+    public float getDataMax() {
+        return dataMax;
+    }
+
+    public void setDataMax(float dataMax) {
+        this.dataMax = dataMax;
+    }
     public int getId() {
         return id;
     }
@@ -51,20 +59,20 @@ public class user {
         this.phone = phone;
     }
 
-    public String getIdCard() {
-        return idCard;
-    }
-
-    public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public float getDataSize() {
+        return dataSize;
+    }
+
+    public void setDataSize(float dataSize) {
+        this.dataSize = dataSize;
     }
 
 }

@@ -14,17 +14,17 @@ public class UserRepository {
     private UserRowMapper userRowMapper=new UserRowMapper();
 
 //增
-    public String insertNewUser(user user){
+    public boolean insertNewUser(user user){
         try {
             usertemplate.update("insert into user(username,password,email,phone) values(?,?,?,?)",
                     user.getUsername(),
                     user.getPassword(),
                     user.getEmail(),
                     user.getPhone());
-            return "恭喜您！注册成功！";
+            return true;
         }catch (Exception e){
             System.out.println(e);
-            return "未知错误，注册失败。";
+            return false;
         }
 
     }
