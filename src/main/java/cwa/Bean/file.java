@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class file {
     //文件表
-    private int id;
+    private int fileId;
     private int userId;
     private String fileName;
     private Date uploadTime;
@@ -17,15 +17,15 @@ public class file {
     //文件关系表
     private int file_userId;
     private int file_parentId;
-    private String file_parentPath;
-    private boolean file_kind;
+    private String file_Path;
 
-    public int getId() {
-        return id;
+
+    public int getFileId() {
+        return fileId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setFileId(int fileId) {
+        this.fileId = fileId;
     }
 
     public int getUserId() {
@@ -108,20 +108,14 @@ public class file {
         this.file_parentId = file_parentId;
     }
 
-    public String getFile_parentPath() {
-        return file_parentPath;
+    public String getFile_Path() {
+        return file_Path;
     }
 
-    public void setFile_parentPath(String file_parentPath) {
-        this.file_parentPath = file_parentPath;
+    public void setFile_Path(String file_Path) {
+        this.file_Path = file_Path;
     }
 
-    public boolean isFile_kind() {
-        return file_kind;
-    }
 
-    public void setFile_kind(boolean file_kind) {
-        this.file_kind = file_kind;
-    }
 
 }

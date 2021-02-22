@@ -12,8 +12,7 @@ public class FileRowMapper implements RowMapper<file> {
     @Override
     public file mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         file file = new file();
-        file.setId(resultSet.getInt("id"));
-        file.setUserId(resultSet.getInt("userid"));
+        file.setFileId(resultSet.getInt("fileId"));
         file.setFileName(resultSet.getString("filename"));
         file.setUploadTime(resultSet.getDate("uploadtime"));
         file.setUpdateTime(resultSet.getDate("updatetime"));
@@ -24,8 +23,8 @@ public class FileRowMapper implements RowMapper<file> {
 
         file.setFile_userId(resultSet.getInt("file_userId"));
         file.setFile_parentId(resultSet.getInt("file_parentId"));
-        file.setFile_parentPath(resultSet.getString("file_parentPath"));
-        file.setFile_kind(resultSet.getBoolean("file_kind"));
+        file.setFile_Path(resultSet.getString("file_path"));
+
         return file;
     }
 }

@@ -35,8 +35,8 @@
                 <p>有帐号就登录吧，好久不见了！</p>
             </div>
             <div class="img__btn">
-                <span class="m--up">注 册</span>
-                <span class="m--in">登 录</span>
+                <span id="registerBar" class="m--up">注 册</span>
+                <span id="loginBar" class="m--in">登 录</span>
             </div>
         </div>
         <div class="form sign-up">
@@ -65,10 +65,6 @@
 </div>
 <script src="/js/loginScript.js"></script>
 <script>
-    function indexLogin() {
-        window.location.href = "login";
-    }
-
     function register() {
         if ($("#regUsername").val() == '') {
             alert("用户名不能为空，请重新输入！");
@@ -101,7 +97,8 @@
                     $("#regUsername").focus();
                 }else {
                     alert("注册成功！");
-                    setTimeout("indexLogin()", 1500);
+                    $("#loginBar").click();
+                    // setTimeout("indexLogin()", 1500);
                 }
             }
         })

@@ -1,5 +1,6 @@
 package cwa.Controller;
 
+import cwa.Bean.file;
 import cwa.Bean.user;
 import cwa.Service.UserService;
 
@@ -8,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
@@ -34,7 +33,7 @@ public class UserController {
 
     //登出
     @GetMapping("/User/logout")
-    private boolean logOut(HttpSession session) {
+    public boolean logOut(HttpSession session) {
         try {
             session.removeAttribute("currentUser");
             return true;
@@ -55,7 +54,16 @@ public class UserController {
     public boolean login(user logUser, HttpSession session) throws NoSuchAlgorithmException {
         user currentUser = userService.loginCheck(logUser);
         if (currentUser != null) {
+            //设置登录用户
             session.setAttribute("currentUser", currentUser);
+            //设置根目录
+            file currentFile=new file();
+            currentFile.setFile_userId(currentFile.getUserId());
+            currentFile.setFileId(0);
+            currentFile.setFile_Path("/");
+
+            session.setAttribute("currentFile",currentFile);
+
             return true;
         } else
             return false;

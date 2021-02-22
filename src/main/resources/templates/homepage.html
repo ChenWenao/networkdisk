@@ -214,7 +214,14 @@
         if (foldName!=null) {
             $.ajax({
                 url:'/File/newFileFold/'+foldName,
-                type:'GET'
+                type:'GET',
+                success:function (data){
+                    if(data==true){
+                        alert("新建文件夹成功！")
+                    }else {
+                        alert("文件夹创建失败！")
+                    }
+                }
             })
 
         }else {

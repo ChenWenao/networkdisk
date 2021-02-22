@@ -3,7 +3,7 @@ package cwa.Bean;
 import java.util.Date;
 
 public class user {
-    private int id;
+    private int userId;
     private String username;
     private String password;
     private String email;
@@ -19,12 +19,12 @@ public class user {
     public void setDataMax(float dataMax) {
         this.dataMax = dataMax;
     }
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
