@@ -36,6 +36,7 @@ public class UserController {
     public boolean logOut(HttpSession session) {
         try {
             session.removeAttribute("currentUser");
+            session.removeAttribute("currentFile");
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -68,4 +69,12 @@ public class UserController {
         } else
             return false;
     }
+
+    //获取当前用户
+    @GetMapping("/User/getCurrentUser")
+    public user getCurrentUser(HttpSession session) {
+        return (user) session.getAttribute("currentUser");
+    }
+
+
 }

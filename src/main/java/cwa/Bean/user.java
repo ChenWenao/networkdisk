@@ -9,16 +9,8 @@ public class user {
     private String email;
     private String phone;
     private Date createTime;
-    private float dataSize;
-    private float dataMax;
-
-    public float getDataMax() {
-        return dataMax;
-    }
-
-    public void setDataMax(float dataMax) {
-        this.dataMax = dataMax;
-    }
+    private double dataSize;
+    private double dataMax;
 
     public int getUserId() {
         return userId;
@@ -68,12 +60,19 @@ public class user {
         this.createTime = createTime;
     }
 
-    public float getDataSize() {
+    public double getDataSize() {
         return dataSize;
     }
 
-    public void setDataSize(float dataSize) {
+    public void setDataSize(double dataSize) {
         this.dataSize = dataSize;
     }
 
+    public double getDataMax() {
+        return dataMax;
+    }
+
+    public void setDataMax(double dataMax) {
+        this.dataMax = dataMax;
+    }
 }
