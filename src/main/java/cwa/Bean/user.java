@@ -19,6 +19,7 @@ public class user {
     public void setDataMax(float dataMax) {
         this.dataMax = dataMax;
     }
+
     public int getUserId() {
         return userId;
     }

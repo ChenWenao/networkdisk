@@ -41,7 +41,7 @@ public class FileRepository {
                     targetFile.getFileName(),
                     targetFile.getFileType());
             return files.get(0);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         }

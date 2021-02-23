@@ -1,4 +1,5 @@
 package cwa.config;
+
 import cwa.config.intercepors.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

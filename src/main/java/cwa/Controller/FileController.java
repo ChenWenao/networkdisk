@@ -16,10 +16,10 @@ public class FileController {
     private FileService fileService;
 
     @GetMapping("/File/newFileFold/{foldName}")
-    public boolean newFileFold(@PathVariable("foldName")String newFileFoldName, HttpSession session){
+    public boolean newFileFold(@PathVariable("foldName") String newFileFoldName, HttpSession session) {
         try {
-            return fileService.addNewFileFold((file)session.getAttribute("currentFile"),((user)session.getAttribute("currentUser")).getUserId(),newFileFoldName);
-        }catch (Exception e) {
+            return fileService.addNewFileFold((file) session.getAttribute("currentFile"), ((user) session.getAttribute("currentUser")).getUserId(), newFileFoldName);
+        } catch (Exception e) {
             System.out.println(e);
             return false;
         }

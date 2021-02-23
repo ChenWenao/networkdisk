@@ -57,12 +57,12 @@ public class UserController {
             //设置登录用户
             session.setAttribute("currentUser", currentUser);
             //设置根目录
-            file currentFile=new file();
+            file currentFile = new file();
             currentFile.setFile_userId(currentFile.getUserId());
             currentFile.setFileId(0);
             currentFile.setFile_Path("/");
 
-            session.setAttribute("currentFile",currentFile);
+            session.setAttribute("currentFile", currentFile);
 
             return true;
         } else

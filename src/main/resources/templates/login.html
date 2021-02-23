@@ -88,14 +88,14 @@
             type: 'POST',
             data: formData,
             success: function (data) {
-                if (data==false){
+                if (data == false) {
                     alert("当前用户已存在，请重新输入！");
                     $("#regUsername").val("");
                     $("#regPassword").val("");
                     $("#regEmail").val("");
                     $("#regPhone").val("");
                     $("#regUsername").focus();
-                }else {
+                } else {
                     alert("注册成功！");
                     $("#loginBar").click();
                     // setTimeout("indexLogin()", 1500);

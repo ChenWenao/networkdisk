@@ -11,10 +11,10 @@ import java.util.List;
 public class UserRepository {
     @Autowired
     private JdbcTemplate usertemplate;
-    private UserRowMapper userRowMapper=new UserRowMapper();
+    private UserRowMapper userRowMapper = new UserRowMapper();
 
-//增
-    public boolean insertNewUser(user user){
+    //增
+    public boolean insertNewUser(user user) {
         try {
             usertemplate.update("insert into user(username,password,email,phone) values(?,?,?,?)",
                     user.getUsername(),
@@ -22,7 +22,7 @@ public class UserRepository {
                     user.getEmail(),
                     user.getPhone());
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return false;
         }
@@ -31,16 +31,15 @@ public class UserRepository {
     //删
 
 
-
     //改
 
 
     //查
-    public user selectOneUser(user user){
+    public user selectOneUser(user user) {
         try {
-        List<user> userSelectResult=usertemplate.query("select * from user where username=? or email=? or phone=?",userRowMapper,user.getUsername(),user.getEmail(),user.getPhone());
-        return userSelectResult.get(0);
-        }catch (Exception e){
+            List<user> userSelectResult = usertemplate.query("select * from user where username=? or email=? or phone=?", userRowMapper, user.getUsername(), user.getEmail(), user.getPhone());
+            return userSelectResult.get(0);
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         }
