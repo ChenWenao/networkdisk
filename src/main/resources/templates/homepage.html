@@ -10,7 +10,6 @@
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
     <!--[if lt IE 9]>
@@ -23,6 +22,9 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/css/homepage.css">
+<script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
 <div class="container">
     <div class="row clearfix">
         <div class="col-md-12 column">
@@ -33,10 +35,9 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <form class="navbar-form navbar-left" role="search">
-                        <div class="form-group">
-                            <input class="form-control" type="text"/>
-                        </div>
+                        <input class="form-control" type="text"/>
                         <button type="submit" class="btn btn-default">搜索（未完成）</button>
+
 
                     </form>
                     <ul class="nav navbar-nav navbar-right">
@@ -69,16 +70,38 @@
                     </ul>
                 </div>
             </nav>
-            <button type="button" onclick="goBack()" id="goBackButton" class="navbar-brand btn btn-default">
+            <button type="button" onclick="goBack()" id="goBackButton" class="navbar-brand btn btn-info">
                 返回
             </button>
-            <button type="button" onclick="newFileFold()" id="newFileFoldButton" class="navbar-brand btn btn-default">
+
+            <button class="navbar-brand btn btn-default" data-toggle="modal" data-target="#newFoldBox">
                 新建文件夹
             </button>
-            <input type="file" id="uploadFileInput" onclick="uploadFile()" style="display:none"/>
-            <button type="button" onclick="chooseFile()" id="uploadFileButton" class="navbar-brand btn btn-default">
-                上传文件
-            </button>
+            <form id="uploadFileForm">
+                <input type="file" id="uploadFileInput" name="upFile" onchange="uploadFile()" style="display:none"/>
+                <button type="button" onclick="chooseFile()" id="uploadFileButton" class="navbar-brand btn btn-default">
+                    上传文件
+                </button>
+            </form>
+
+
+            <div style="display: none;" class="progress-body">
+                <div>
+                    <span style="width: 100px; display: inline-block; text-align: right">上传进度：</span>
+                    <progress></progress>
+                    <percentage>0%</percentage>
+                </div>
+                <div>
+                    <span style="width: 100px; display: inline-block; text-align: right">上传速度：</span>
+                    <span style="margin-bottom: 10px; margin-left: 30px; width: 300px;" class="progress-speed">0 M/S, 0/0M</span>
+                </div>
+                <div>
+                    <span style="width: 100px; display: inline-block; text-align: right">上传状态：</span>
+                    <span style="margin-bottom: 10px; margin-left: 30px; width: 300px;" class="progress-info">请选择文件并点击上传文件按钮</span>
+                </div>
+            </div>
+
+
             <a class="navbar-brand" id="currentPath"></a>
             <table class="table table-striped">
                 <thead>
@@ -117,7 +140,37 @@
         <!--        </nav>-->
     </div>
 </div>
+
+<div class="modal fade" id="newFoldBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新建文件夹</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <span class="input-group-addon">文件名：</span>
+                    <input id="newFileFoldName" type="text" class="form-control" placeholder="请输入文件夹名称">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="newFileFold()">新建</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
 <script>
+
+    //提示框初始化
+    toastr.options = {
+        positionClass: "toast-bottom-center",
+        timeOut: "3000",
+    };
 
     window.onload = function () {
         document.getElementById("goBackButton").disabled = true;
@@ -154,7 +207,7 @@
             type: "GET",
             url: "/User/getCurrentUser",
             success: function (data) {
-                $("#releaseDateSize").text("剩余空间："+((data.dataMax-data.dataSize)/1048576).toFixed(2)+" MB");
+                $("#releaseDateSize").text("剩余空间：" + ((data.dataMax - data.dataSize) / 1048576).toFixed(2) + " MB");
             },
         })
 
@@ -167,11 +220,11 @@
             type: 'GET',
             success: function (data) {
                 if (data == true) {
-                    alert("登出成功！");
+                    toastr.success("登出成功！")
                     setTimeout("indexLogin()", 1500);
                     window.location.reload();
                 } else {
-                    alert("未知错误，登出失败！");
+                    toastr.error("未知错误，登出失败！")
                 }
             }
         })
@@ -194,72 +247,149 @@
         })
     }
 
-    function chooseFile() {
-        document.getElementById("uploadFile").click();
-    }
-
     //新建文件夹
     function newFileFold() {
-        var foldName = prompt("请输入文件夹名称：", "");
-        if (foldName != null) {
+        var foldName = $('#newFileFoldName').val();
+        $('#newFileFoldName').val("");
+        if (foldName == "") {
+            $('#newFileFoldName').attr('placeholder', "名称不能为空！");
+        } else {
             $.ajax({
                 url: '/File/newFileFold/' + foldName,
                 type: 'GET',
                 success: function (data) {
                     if (data == true) {
-                        alert("新建文件夹成功！")
+                        $('#newFileFoldName').attr('placeholder', "请输入文件夹名称！");
+                        $('#newFoldBox').modal('hide');
+                        toastr.success("新建文件夹成功！");
                         refreshData();
                     } else {
-                        alert("当前文件夹已存在！")
+                        $('#newFileFoldName').attr('placeholder', "文件夹已存在！");
                     }
                 }
             })
         }
     }
 
-    //上传文件，未完工！
-    function uploadFile() { //在这里进行ajax 文件上传 用户的信息
-        var uploadFile = $("input[id='uploadFile']").val();//用户文件内容(文件)
-        // 判断文件是否为空
-        if (uploadFile == "") {
-            alert("请选择上传的目标文件! ")
-            return false;
-        }
-        //判断文件类型,我这里根据业务需求判断的是Excel文件
-        // var fileName1 = uploadFile.substring(uploadFile.lastIndexOf(".") + 1).toLowerCase();
-        // if(fileName1 != "xls" && fileName1 !="xlsx"){
-        //     alert("请选择Execl文件!");
-        //     return false;
-        // }
-        //判断文件大小
-        var size = $("input[name='uploadFile']")[0].files[0].size;
-        if (size > 1073741824) {
-            alert("上传文件不能大于1Gb!");
-            return false;
-        }
-        bool = true;
-        var type = "file";
-        var formData = new FormData();//这里需要实例化一个FormData来进行文件上传
-        formData.append(type, $("#uploadFile")[0].files[0]);
-        $.ajax({
-            type: "post",
-            url: "uploadFile",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                if (data == "error") {
-                    alert("文件提交失败!");
-                } else {
-                    alert("文件上传成功!");
-                }
-            }
-        });
+    function chooseFile() {
+        document.getElementById("uploadFileInput").click();
     }
+
+    // 上传文件
+    function uploadFile() {
+        var checkFile = $("#uploadFileInput").val();
+        if (null == checkFile || "" == checkFile) {
+            toastr.warning("文件为空,请选择文件！");
+            return;
+        } else {
+            var formData = new FormData(document.getElementById("uploadFileForm"));
+            $.ajax({
+                type: "POST",
+                enctype: 'multipart/form-data',
+                url: '/File/uploadFile',
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                error: function (data) {
+                    flag = false;
+                    toastr.error("访问服务器错误，请重试！");
+                },
+                success: function (data) {
+                    if (data == "请上传一个文件！") {
+                        toastr.warning(data);
+                        $('#uploadFileInput').val('');
+                        return;
+                    } else if (data == "当前文件已存在！") {
+                        toastr.warning(data);
+                        $('#uploadFileInput').val('');
+                        return;
+                    } else if (data == "上传成功！") {
+                        toastr.success(data);
+                        $('#uploadFileInput').val('');
+                        refreshData();
+                        return;
+                    } else {
+                        $('#uploadFileInput').val('');
+                        toastr.error(data);
+                        return;
+                    }
+
+                },
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    if (xhr.upload) {
+                        //处理进度条的事件
+                        xhr.upload.addEventListener("progress", progressHandle, false);
+                        //加载完成的事件
+                        xhr.addEventListener("load", completeHandle, false);
+                        //加载出错的事件
+                        xhr.addEventListener("error", failedHandle, false);
+                        //加载取消的事件
+                        xhr.addEventListener("abort", canceledHandle, false);
+                        //开始显示进度条
+                        showProgress();
+                        return xhr;
+                    }
+                }
+            }, 'json');
+        }
+    }
+
+    var start = 0;
+
+    //显示进度条的函数
+    function showProgress() {
+        start = new Date().getTime();
+        $(".progress-body").css("display", "block");
+    }
+
+    //隐藏进度条的函数
+    function hideProgress() {
+        $("#uploadFile").val('');
+        $('.progress-body .progress-speed').html("0 M/S, 0/0M");
+        $('.progress-body percentage').html("0%");
+        $('.progress-body .progress-info').html("请选择文件并点击上传文件按钮");
+        //$(".progress-body").css("display", "none");
+    }
+
+    //进度条更新
+    function progressHandle(e) {
+        $('.progress-body progress').attr({value: e.loaded, max: e.total});
+        var percent = e.loaded / e.total * 100;
+        var time = ((new Date().getTime() - start) / 1000).toFixed(3);
+        if (time == 0) {
+            time = 1;
+        }
+        $('.progress-body .progress-speed').html(((e.loaded / 1024) / 1024 / time).toFixed(2) + "M/S, " + ((e.loaded / 1024) / 1024).toFixed(2) + "/" + ((e.total / 1024) / 1024).toFixed(2) + " MB. ");
+        $('.progress-body percentage').html(percent.toFixed(2) + "%");
+        if (percent == 100) {
+            $('.progress-body .progress-info').html("上传完成,后台正在处理...");
+        } else {
+            $('.progress-body .progress-info').html("文件上传中...");
+        }
+    }
+
+    //上传完成处理函数
+    function completeHandle(e) {
+        $('.progress-body .progress-info').html("上传文件完成。");
+        setTimeout(hideProgress, 2000);
+    }
+
+    //上传出错处理函数
+    function failedHandle(e) {
+        $('.progress-body .progress-info').html("上传文件出错, 服务不可用或文件过大。");
+    }
+
+    //上传取消处理函数
+    function canceledHandle(e) {
+        $('.progress-body .progress-info').html("上传文件取消。");
+    }
+
 
     //访问目标
     function clickFile(fileId, fileType) {
-        if (fileType == 'fold') {
+        if (fileType == '文件夹') {
             // 访问的是文件夹
             $.ajax({
                 url: '/File/refreshFile/' + fileId,

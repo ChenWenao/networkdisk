@@ -3,7 +3,10 @@
     <meta charset="utf-8">
     <title>网络云盘</title>
     <link rel="stylesheet" href="/css/loginStyle.css">
-    <script src="/js/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
 
 </head>
 
@@ -21,6 +24,7 @@
                 <input id="logPassword" name="password"/>
             </label>
             <p class="forgot-pass"><a href="/OnlineCommunity/login/passwordBack">忘记密码？</a></p>
+
             <button type="button" class="submit" onclick="login()">登 录</button>
         </form>
     </div>
@@ -63,21 +67,29 @@
         </div>
     </div>
 </div>
+
 <script src="/js/loginScript.js"></script>
 <script>
+    //提示框初始化
+    toastr.options = {
+        positionClass: "toast-top-center",
+        timeOut: "3000",
+    };
+
+    //注册
     function register() {
         if ($("#regUsername").val() == '') {
-            alert("用户名不能为空，请重新输入！");
+            toastr.warning("用户名不能为空，请重新输入！");
             $("#regUsername").focus();
             return;
         }
         if ($("#regEmail").val() == '') {
-            alert("邮箱不能为空，请重新输入！");
+            toastr.warning("邮箱不能为空，请重新输入！");
             $("#regEmail").focus();
             return;
         }
         if ($("#regPhone").val() == '') {
-            alert("电话号码不能为空，请重新输入！");
+            toastr.warning("电话号码不能为空，请重新输入！");
             $("#regPhone").focus();
             return;
         }
@@ -89,14 +101,14 @@
             data: formData,
             success: function (data) {
                 if (data == false) {
-                    alert("当前用户已存在，请重新输入！");
+                    toastr.warning("当前用户已存在，请重新输入！");
                     $("#regUsername").val("");
                     $("#regPassword").val("");
                     $("#regEmail").val("");
                     $("#regPhone").val("");
                     $("#regUsername").focus();
                 } else {
-                    alert("注册成功！");
+                    toastr.success("注册成功！");
                     $("#loginBar").click();
                     // setTimeout("indexLogin()", 1500);
                 }
@@ -104,14 +116,16 @@
         })
     }
 
+
+    //登录
     function login() {
         if ($("#logUsername").val() == '') {
-            alert("用户名不能为空，请重新输入！");
+            toastr.warning("用户名不能为空，请重新输入！");
             $("#logUsername").focus();
             return;
         }
         if ($("#logPassword").val() == '') {
-            alert("密码不能为空，请重新输入！");
+            toastr.warning("密码不能为空，请重新输入！");
             $("#logPassword").focus();
             return;
         }
@@ -123,16 +137,18 @@
             data: formData,
             success: function (data) {
                 if (data == false) {
-                    alert("用户名或密码错误，请重新输入！");
+                    toastr.error("用户名或密码错误！");
                     $("#logPassword").val("");
                     $("#logPassword").focus();
                 } else {
-                    alert("登录成功！");
-                    window.location.href = "homepage"
+                    window.location.href = "homepage";
                 }
             }
         })
     }
+
+
+
 </script>
 </body>
 

@@ -10,7 +10,7 @@ public class file {
     private Date uploadTime;
     private Date updateTime;
     private String fileType;
-    private int fileSize;
+    private long fileSize;
     private int fileStatus;
     private String fileLocation;
 
@@ -18,6 +18,7 @@ public class file {
     private int file_userId;
     private int file_parentId;
     private String file_Path;
+
 
 
     public int getFileId() {
@@ -68,11 +69,11 @@ public class file {
         this.fileType = fileType;
     }
 
-    public int getFileSize() {
+    public long getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(int fileSize) {
+    public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
@@ -115,6 +116,4 @@ public class file {
     public void setFile_Path(String file_Path) {
         this.file_Path = file_Path;
     }
-
-
 }

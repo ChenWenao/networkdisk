@@ -15,13 +15,32 @@ public class FileRepository {
 
     //增
     // 文件夹
-    public boolean insertNewFileFold(file motherFile, int userId, String newFoldName) {
+    public boolean insertNewFileFold(file newFold) {
         try {
             filetemplate.update("insert into networkdisk.file(file_userId,file_parentId,file_path, filename) values (?,?,?,?)",
-                    userId,
-                    motherFile.getFileId(),
-                    motherFile.getFile_Path() + "/"+newFoldName,
-                    newFoldName);
+                    newFold.getFile_userId(),
+                    newFold.getFile_parentId(),
+                    newFold.getFile_Path(),
+                    newFold.getFileName());
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    //文件
+    public boolean insertNewFile(file newFile) {
+        try {
+            //新文件需要字段：filename,filetype,filesize,filelocation,file_userId,file_parentId,file_path
+            filetemplate.update("insert into networkdisk.file(filename,filetype,filesize,filelocation,file_userId,file_parentId,file_path) values (?,?,?,?,?,?,?)",
+                    newFile.getFileName(),
+                    newFile.getFileType(),
+                    newFile.getFileSize(),
+                    newFile.getFileLocation(),
+                    newFile.getFile_userId(),
+                    newFile.getFile_parentId(),
+                    newFile.getFile_Path());
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -32,14 +51,15 @@ public class FileRepository {
 
     //查
     //文件夹
-    public file selectFile(file motherFile, int userId, String fileName,String fileType) {
+    //根据其他信息查某人的某个文件
+    public file selectFile(file targetFile) {
         try {
             List<file> files = filetemplate.query("select * from networkdisk.file where file_parentId=? and file_userId=? and filename=? and filetype=?",
                     fileRowMapper,
-                    motherFile.getFileId(),
-                    userId,
-                    fileName,
-                    fileType);
+                    targetFile.getFile_parentId(),
+                    targetFile.getFile_userId(),
+                    targetFile.getFileName(),
+                    targetFile.getFileType());
             return files.get(0);
         } catch (Exception e) {
             System.out.println(e);
@@ -58,7 +78,7 @@ public class FileRepository {
         }
     }
 
-    //查某人(userId)的某个文件(fileId)信息
+    //根据id查某人(userId)的某个文件
     public file selectUserFileById(int fileId, int userId) {
         try {
             List<file> files = filetemplate.query("select * from file where fileId=? and file_userId=?", fileRowMapper, fileId, userId);

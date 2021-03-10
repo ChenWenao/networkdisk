@@ -18,7 +18,7 @@ public class FileRowMapper implements RowMapper<file> {
         file.setUploadTime(resultSet.getDate("uploadtime"));
         file.setUpdateTime(resultSet.getDate("updatetime"));
         file.setFileType(resultSet.getString("filetype"));
-        file.setFileSize(resultSet.getInt("filesize"));
+        file.setFileSize(resultSet.getLong("filesize"));
         file.setFileStatus(resultSet.getInt("filestatus"));
         file.setFileLocation(resultSet.getString("fileLocation"));
 
