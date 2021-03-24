@@ -1,8 +1,8 @@
-package cwa.Controller;
+package cwa.controller;
 
-import cwa.Bean.file;
-import cwa.Bean.user;
-import cwa.Service.UserService;
+import cwa.bean.NetFile;
+import cwa.bean.NetUser;
+import cwa.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,19 +46,19 @@ public class UserController {
 
     //注册功能
     @PostMapping("/User/register")
-    public boolean register(user regUser) throws NoSuchAlgorithmException {
+    public boolean register(NetUser regUser) throws NoSuchAlgorithmException {
         return userService.addNewUser(regUser);
     }
 
     //登录功能
     @PostMapping("/User/login")
-    public boolean login(user logUser, HttpSession session) throws NoSuchAlgorithmException {
-        user currentUser = userService.loginCheck(logUser);
+    public boolean login(NetUser logUser, HttpSession session) throws NoSuchAlgorithmException {
+        NetUser currentUser = userService.loginCheck(logUser);
         if (currentUser != null) {
             //设置登录用户
             session.setAttribute("currentUser", currentUser);
             //设置根目录
-            file currentFile = new file();
+            NetFile currentFile = new NetFile();
             currentFile.setFile_userId(currentFile.getUserId());
             currentFile.setFileId(0);
             currentFile.setFile_Path("/");
@@ -72,8 +72,8 @@ public class UserController {
 
     //获取当前用户
     @GetMapping("/User/getCurrentUser")
-    public user getCurrentUser(HttpSession session) {
-        return (user) session.getAttribute("currentUser");
+    public NetUser getCurrentUser(HttpSession session) {
+        return (NetUser) session.getAttribute("currentUser");
     }
 
 

@@ -1,16 +1,16 @@
-package cwa.Dao;
+package cwa.dao;
 
-import cwa.Bean.user;
+import cwa.bean.NetUser;
 import org.springframework.jdbc.core.RowMapper;
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRowMapper implements RowMapper<user> {
+public class UserRowMapper implements RowMapper<NetUser> {
     @Override
-    public user mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-        user user = new user();
+    public NetUser mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+        NetUser user = new NetUser();
         user.setUserId(resultSet.getInt("userId"));
         user.setUsername(resultSet.getString("username"));
         user.setPassword(resultSet.getString("password"));

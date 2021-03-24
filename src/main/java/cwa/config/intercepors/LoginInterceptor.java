@@ -1,6 +1,6 @@
 package cwa.config.intercepors;
 
-import cwa.Bean.user;
+import cwa.bean.NetUser;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -16,7 +16,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     //这个方法是在访问接口之前执行。
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
-        user currentUser = (user) session.getAttribute("currentUser");
+        NetUser currentUser = (NetUser) session.getAttribute("currentUser");
         //如果session中没有loginUser，表示没登陆
         if (currentUser == null) {
             //这个方法返回false表示忽略当前请求，如果一个用户调用了需要登陆才能使用的接口，如果他没有登陆这里会直接忽略。

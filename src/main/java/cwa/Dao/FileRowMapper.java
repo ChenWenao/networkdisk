@@ -1,6 +1,6 @@
-package cwa.Dao;
+package cwa.dao;
 
-import cwa.Bean.file;
+import cwa.bean.NetFile;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class FileRowMapper implements RowMapper<file> {
+public class FileRowMapper implements RowMapper<NetFile> {
 
     @Override
-    public file mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-        file file = new file();
+    public NetFile mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+        NetFile file = new NetFile();
         file.setFileId(resultSet.getInt("fileId"));
         file.setFileName(resultSet.getString("filename"));
         file.setUploadTime(resultSet.getDate("uploadtime"));

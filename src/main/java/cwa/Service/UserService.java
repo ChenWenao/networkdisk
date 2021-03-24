@@ -1,7 +1,7 @@
-package cwa.Service;
+package cwa.service;
 
-import cwa.Bean.user;
-import cwa.Dao.UserRepository;
+import cwa.bean.NetUser;
+import cwa.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +15,8 @@ public class UserService {
     private UserRepository userRepository;
 
     //增
-    public boolean addNewUser(user user) throws NoSuchAlgorithmException {
-        user userSelect = userRepository.selectOneUser(user);
+    public boolean addNewUser(NetUser user) throws NoSuchAlgorithmException {
+        NetUser userSelect = userRepository.selectOneUser(user);
         if (userSelect != null)
             return false;
         else {
@@ -35,14 +35,14 @@ public class UserService {
 //改
 
     //查
-    public user loginCheck(user user) throws NoSuchAlgorithmException {
+    public NetUser loginCheck(NetUser user) throws NoSuchAlgorithmException {
         //加密密码
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         md5.update(user.getPassword().getBytes());
         String password_MD5 = new BigInteger(1, md5.digest()).toString(16);
         user.setPassword(password_MD5);
         //查找用户
-        user userSelect = userRepository.selectOneUser(user);
+        NetUser userSelect = userRepository.selectOneUser(user);
 
         if (userSelect == null || !userSelect.getPassword().equals(user.getPassword())) {
             return null;

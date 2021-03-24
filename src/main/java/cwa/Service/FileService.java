@@ -1,7 +1,7 @@
-package cwa.Service;
+package cwa.service;
 
-import cwa.Bean.file;
-import cwa.Dao.FileRepository;
+import cwa.bean.NetFile;
+import cwa.dao.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +12,8 @@ public class FileService {
     @Autowired
     private FileRepository fileRepository;
 
-    public boolean addNewFileFold(file motherFile, int userId, String sonFileName) {
-        file newFold = new file();
+    public boolean addNewFileFold(NetFile motherFile, int userId, String sonFileName) {
+        NetFile newFold = new NetFile();
         newFold.setFile_parentId(motherFile.getFileId());
         newFold.setFile_userId(userId);
         newFold.setFileName(sonFileName);
@@ -27,22 +27,22 @@ public class FileService {
         }
     }
 
-    public boolean addNewFile(file newFile){
+    public boolean addNewFile(NetFile newFile){
         return fileRepository.insertNewFile(newFile);
     }
 
     //根据其他信息查某人的某个文件
-    public file getUserFileByOthers(file targetFile){
+    public NetFile getUserFileByOthers(NetFile targetFile){
         return fileRepository.selectFile(targetFile);
     }
 
     //查找文件夹下的内容
-    public List<file> getUserFilesByParentId(int fileId, int userId){
+    public List<NetFile> getUserFilesByParentId(int fileId, int userId){
         return fileRepository.selectUserFilesByParentId(fileId, userId);
     }
 
     //根据id查某人的某个文件
-    public file getUserFileById(int fileId, int userId){
+    public NetFile getUserFileById(int fileId, int userId){
         return fileRepository.selectUserFileById(fileId, userId);
     }
 

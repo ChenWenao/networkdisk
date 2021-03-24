@@ -1,8 +1,8 @@
-package cwa.Bean;
+package cwa.bean;
 
 import java.util.Date;
 
-public class file {
+public class NetFile {
     //文件表
     private int fileId;
     private int userId;

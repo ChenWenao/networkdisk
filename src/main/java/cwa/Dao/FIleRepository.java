@@ -1,6 +1,6 @@
-package cwa.Dao;
+package cwa.dao;
 
-import cwa.Bean.file;
+import cwa.bean.NetFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,7 +15,7 @@ public class FileRepository {
 
     //增
     // 文件夹
-    public boolean insertNewFileFold(file newFold) {
+    public boolean insertNewFileFold(NetFile newFold) {
         try {
             filetemplate.update("insert into networkdisk.file(file_userId,file_parentId,file_path, filename) values (?,?,?,?)",
                     newFold.getFile_userId(),
@@ -30,7 +30,7 @@ public class FileRepository {
     }
 
     //文件
-    public boolean insertNewFile(file newFile) {
+    public boolean insertNewFile(NetFile newFile) {
         try {
             //新文件需要字段：filename,filetype,filesize,filelocation,file_userId,file_parentId,file_path
             filetemplate.update("insert into networkdisk.file(filename,filetype,filesize,filelocation,file_userId,file_parentId,file_path) values (?,?,?,?,?,?,?)",
@@ -41,6 +41,7 @@ public class FileRepository {
                     newFile.getFile_userId(),
                     newFile.getFile_parentId(),
                     newFile.getFile_Path());
+
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -52,9 +53,9 @@ public class FileRepository {
     //查
     //文件夹
     //根据其他信息查某人的某个文件
-    public file selectFile(file targetFile) {
+    public NetFile selectFile(NetFile targetFile) {
         try {
-            List<file> files = filetemplate.query("select * from networkdisk.file where file_parentId=? and file_userId=? and filename=? and filetype=?",
+            List<NetFile> files = filetemplate.query("select * from networkdisk.file where file_parentId=? and file_userId=? and filename=? and filetype=?",
                     fileRowMapper,
                     targetFile.getFile_parentId(),
                     targetFile.getFile_userId(),
@@ -68,9 +69,9 @@ public class FileRepository {
     }
 
     //查某人(userId)的某个文件夹(fileId)下的文件列表
-    public List<file> selectUserFilesByParentId(int fileId, int userId) {
+    public List<NetFile> selectUserFilesByParentId(int fileId, int userId) {
         try {
-            List<file> files = filetemplate.query("select * from file where file_parentId=? and file_userId=?", fileRowMapper, fileId, userId);
+            List<NetFile> files = filetemplate.query("select * from file where file_parentId=? and file_userId=?", fileRowMapper, fileId, userId);
             return files;
         } catch (Exception e) {
             System.out.println(e);
@@ -79,9 +80,9 @@ public class FileRepository {
     }
 
     //根据id查某人(userId)的某个文件
-    public file selectUserFileById(int fileId, int userId) {
+    public NetFile selectUserFileById(int fileId, int userId) {
         try {
-            List<file> files = filetemplate.query("select * from file where fileId=? and file_userId=?", fileRowMapper, fileId, userId);
+            List<NetFile> files = filetemplate.query("select * from file where fileId=? and file_userId=?", fileRowMapper, fileId, userId);
             return files.get(0);
         } catch (Exception e) {
             System.out.println(e);

@@ -1,6 +1,6 @@
 
 progress {
-    background-color: #56BE64;
+    background-color: #68fd82;
 }
 
 progress::-webkit-progress-bar {
@@ -8,10 +8,20 @@ progress::-webkit-progress-bar {
 }
 
 progress::-webkit-progress-value {
-    background: #56BE64;
+    background: #64ff7b;
+
 }
 
 percentage {
-    position: fixed;
+    position: center;
     left: 160px;
+}
+
+.list {
+    width: 500px;
+    display: block;
+    overflow: hidden;
+    word-break: keep-all;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

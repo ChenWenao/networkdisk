@@ -1,8 +1,8 @@
-package cwa.Bean;
+package cwa.bean;
 
 import java.util.Date;
 
-public class user {
+public class NetUser {
     private int userId;
     private String username;
     private String password;

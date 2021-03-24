@@ -1,6 +1,6 @@
-package cwa.Dao;
+package cwa.dao;
 
-import cwa.Bean.user;
+import cwa.bean.NetUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +14,7 @@ public class UserRepository {
     private UserRowMapper userRowMapper = new UserRowMapper();
 
     //增
-    public boolean insertNewUser(user user) {
+    public boolean insertNewUser(NetUser user) {
         try {
             usertemplate.update("insert into user(username,password,email,phone) values(?,?,?,?)",
                     user.getUsername(),
@@ -35,9 +35,9 @@ public class UserRepository {
 
 
     //查
-    public user selectOneUser(user user) {
+    public NetUser selectOneUser(NetUser user) {
         try {
-            List<user> userSelectResult = usertemplate.query("select * from user where username=? or email=? or phone=?", userRowMapper, user.getUsername(), user.getEmail(), user.getPhone());
+            List<NetUser> userSelectResult = usertemplate.query("select * from user where username=? or email=? or phone=?", userRowMapper, user.getUsername(), user.getEmail(), user.getPhone());
             return userSelectResult.get(0);
         } catch (Exception e) {
             System.out.println(e);
