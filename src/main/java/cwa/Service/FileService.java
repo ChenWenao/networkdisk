@@ -12,6 +12,8 @@ public class FileService {
     @Autowired
     private FileRepository fileRepository;
 
+
+    //增
     public boolean addNewFileFold(NetFile motherFile, int userId, String sonFileName) {
         NetFile newFold = new NetFile();
         newFold.setFile_parentId(motherFile.getFileId());
@@ -28,9 +30,29 @@ public class FileService {
     }
 
     public boolean addNewFile(NetFile newFile){
-        return fileRepository.insertNewFile(newFile);
+        try {
+            String filePath=newFile.getFile_Path();
+            do{
+                filePath=filePath.substring(0,filePath.lastIndexOf('/'));
+                fileRepository.updateFoldSize(filePath,"+",newFile.getFileSize());
+                System.out.println(filePath);
+            }while (!"/".equals(filePath));
+            return fileRepository.insertNewFile(newFile);
+        }catch (Exception e){
+            return false;
+        }
     }
 
+    //删
+
+
+    //改
+    public boolean deleteFile(int fileId){
+        return fileRepository.setFileDeleted(fileId);
+    }
+
+
+    //查
     //根据其他信息查某人的某个文件
     public NetFile getUserFileByOthers(NetFile targetFile){
         return fileRepository.selectFile(targetFile);

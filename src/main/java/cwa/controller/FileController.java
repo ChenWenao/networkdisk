@@ -17,6 +17,7 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
+    //增
     //新建文件夹
     @GetMapping("/File/newFileFold/{foldName}")
     public boolean newFileFold(@PathVariable("foldName") String newFileFoldName, HttpSession session) {
@@ -78,6 +79,23 @@ public class FileController {
         return "未知错误！";
     }
 
+    //删
+
+
+    //改
+    @GetMapping("/File/deleteFile/{fileId}")
+    public String deleteFile(@PathVariable(value = "fileId")int fileId){
+        if(fileService.deleteFile(fileId)){
+            return "删除文件成功！";
+        }else {
+            return "删除失败！";
+        }
+
+    }
+
+
+
+    //查
     //刷新数据
     @GetMapping("/File/refreshData")
     public List<NetFile> refreshData(HttpSession session) {

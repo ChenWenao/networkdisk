@@ -69,7 +69,7 @@
             </button>
             <form id="uploadFileForm">
                 <input type="file" id="uploadFileInput" name="upFile" onchange="uploadFile()" style="display:none"/>
-                <button type="button" onclick="chooseFile()" id="uploadFileButton" class="navbar-brand btn btn-default">
+                <button type="button" onclick="chooseUpFile()" id="uploadFileButton" class="navbar-brand btn btn-default">
                     上传文件
                 </button>
             </form>
@@ -104,26 +104,14 @@
                     <th>
                         大小
                     </th>
+                    <th>
+
+                    </th>
                 </tr>
                 </thead>
                 <tbody id="fileList"></tbody>
             </table>
         </div>
-        <!--        <nav class="navbar navbar-default navbar-fixed-bottom">-->
-        <!--            <div class="btn-group btn-group-lg col-md-6 col-md-offset-4">-->
-        <!--                <button class="btn btn-default" type="button"><em class="glyphicon glyphicon-align-left"></em> 左-->
-        <!--                </button>-->
-        <!--                <button class="btn btn-default" type="button"><em class="glyphicon glyphicon-align-center"></em>-->
-        <!--                    中-->
-        <!--                </button>-->
-        <!--                <button class="btn btn-default" type="button"><em class="glyphicon glyphicon-align-right"></em>-->
-        <!--                    右-->
-        <!--                </button>-->
-        <!--                <button class="btn btn-default" type="button"><em-->
-        <!--                        class="glyphicon glyphicon-align-justify"></em> 全-->
-        <!--                </button>-->
-        <!--            </div>-->
-        <!--        </nav>-->
     </div>
 </div>
 
@@ -147,6 +135,25 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="deleteConfirm">
+    <div class="modal-dialog">
+        <div class="modal-content message_align">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+                <p>您确认要删除吗？</p>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="deleteFileId"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="deleteFile()" class="btn btn-success" data-dismiss="modal">确定</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -173,10 +180,13 @@
                 $(data).each(
                     function (i, oneFile) {
                         $("#fileList").append(
-                            "<tr><td><a onclick='clickFile(\"" + oneFile.fileId + "\",\"" + oneFile.fileType + "\")'>" + oneFile.fileName + "</a></td>"
-                            + "<td>" + oneFile.updateTime + "</td>"
-                            + "<td>" + oneFile.fileType + "</td>"
-                            + "<td>" + (oneFile.fileSize / 1048576).toFixed(2) + "MB" + "</td></tr>"
+                            "<tr>" +
+                            "<td><a onclick='clickFile(\"" + oneFile.fileId + "\",\"" + oneFile.fileType + "\")'>" + oneFile.fileName + "</a></td>"+
+                            "<td>" + oneFile.updateTime + "</td>"+
+                            "<td>" + oneFile.fileType + "</td>"+
+                            "<td>" + (oneFile.fileSize / 1048576).toFixed(2) + "MB" + "</td>" +
+                            "<td><button type='button' class='btn btn-warning' onclick='deleteConfirm("+oneFile.fileId+")'>删除</button></td>"+
+                            "</tr>"
                         );
                     }
                 );
@@ -235,7 +245,7 @@
 
     //新建文件夹
     function newFileFold() {
-        var foldName = $('#newFileFoldName').val();
+        const foldName = $('#newFileFoldName').val();
         $('#newFileFoldName').val("");
         if (foldName == "") {
             $('#newFileFoldName').attr('placeholder', "名称不能为空！");
@@ -257,18 +267,18 @@
         }
     }
 
-    function chooseFile() {
+    function chooseUpFile() {
         document.getElementById("uploadFileInput").click();
     }
 
     // 上传文件
     function uploadFile() {
-        var checkFile = $("#uploadFileInput").val();
+        const checkFile = $("#uploadFileInput").val();
         if (null == checkFile || "" == checkFile) {
             toastr.warning("文件为空,请选择文件！");
             return;
         } else {
-            var formData = new FormData(document.getElementById("uploadFileForm"));
+            const formData = new FormData(document.getElementById("uploadFileForm"));
             $.ajax({
                 type: "POST",
                 enctype: 'multipart/form-data',
@@ -278,7 +288,6 @@
                 processData: false,
                 contentType: false,
                 error: function (data) {
-                    flag = false;
                     toastr.error("访问服务器错误，请重试！");
                 },
                 success: function (data) {
@@ -389,10 +398,31 @@
                 }
             })
         } else {
-            //访问的是其他文件
+            //访问的是文件
 
 
         }
+    }
+
+    //删除目标
+    function deleteConfirm(fileId){
+        $('#deleteFileId').val(fileId);
+        $('#deleteConfirm').modal('show');
+    }
+
+    function deleteFile(){
+        var fileId=$('#deleteFileId').val();
+        $('#deleteConfirm').modal('hide');
+        $.ajax({
+            url: '/File/deleteFile/' + fileId,
+            type: 'GET',
+            success: function (data) {
+                toastr.warning(data);
+                $('#deleteFileId').val("");
+                refreshData();
+            }
+        })
+
     }
 </script>
 </body>
