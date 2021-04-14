@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -32,6 +34,7 @@ public class FileController {
     //上传文件
     @PostMapping("/File/uploadFile")
     public String newFile(@RequestParam("upFile") MultipartFile upFile, HttpSession session) throws IOException {
+        NetUser currentUser = (NetUser) session.getAttribute("currentUser");
         //判断是否传入图片。
         if (upFile.isEmpty()) {
             //无文件传入
@@ -70,7 +73,6 @@ public class FileController {
                     //设置课程图片Logo。
                     newFile.setFileLocation(realFile.getAbsolutePath());
                     fileService.addNewFile(newFile, ((NetUser) session.getAttribute("currentUser")).getUserId());
-                    NetUser currentUser = (NetUser) session.getAttribute("currentUser");
                     currentUser.setDataSize(currentUser.getDataSize() + newFile.getFileSize());
                     return "上传成功！";
                 } catch (IOException e) {
@@ -81,6 +83,7 @@ public class FileController {
         return "未知错误！";
     }
 
+
     //删
     @GetMapping("/File/removeFile/{fileId}")
     public String removeFile(@PathVariable(value = "fileId") int fileId, HttpSession session) {
@@ -88,7 +91,7 @@ public class FileController {
             NetUser currentUser = (NetUser) session.getAttribute("currentUser");
             NetFile reFile = fileService.getUserFileById(fileId);
             currentUser.setDataSize(currentUser.getDataSize() - reFile.getFileSize());
-            session.setAttribute("currentUser", currentUser);
+
             if (fileService.removeFile(reFile, currentUser.getUserId()))
                 return "彻底删除成功！";
             else
@@ -190,4 +193,40 @@ public class FileController {
         return (NetFile) session.getAttribute("currentFile");
     }
 
+    //下载文件
+    @GetMapping("/File/downloadFile/{downloadId}")
+    public String downloadFile(@PathVariable("downloadId") int downId, HttpServletResponse response, HttpSession session) {
+        NetFile downFile = fileService.getUserFileById(downId);
+        if (downFile.getFile_userId() != ((NetUser) session.getAttribute("currentUser")).getUserId())
+            return null;
+        else {
+            String fileName = downFile.getFileName() + "." + downFile.getFileType();
+            //设置文件路径
+            String realPath = downFile.getFileLocation().substring(0, downFile.getFileLocation().lastIndexOf('\\'));
+
+            File file = new File(realPath + '/' + fileName);
+            if (!file.exists()) {
+                return "下载文件不存在";
+            }
+            response.reset();
+            response.setContentType("application/octet-stream");
+            response.setCharacterEncoding("utf-8");
+            response.setContentLength((int) file.length());
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+
+            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
+                byte[] buff = new byte[1024];
+                OutputStream os = response.getOutputStream();
+                int i = 0;
+                while ((i = bis.read(buff)) != -1) {
+                    os.write(buff, 0, i);
+                    os.flush();
+                }
+            } catch (IOException e) {
+                return "下载失败";
+            }
+            return "下载成功";
+        }
+    }
 }
+
