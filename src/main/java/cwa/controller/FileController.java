@@ -52,9 +52,9 @@ public class FileController {
                 //有重名文件
                 return "当前文件已存在！";
             } else {
-                newFile.setFile_Path(((NetFile) session.getAttribute("currentFile")).getFile_Path() + "/"+newFile.getFileName());
+                newFile.setFile_Path(((NetFile) session.getAttribute("currentFile")).getFile_Path() + "/" + newFile.getFileName());
                 //获取课程图片存储文件夹，若不存在，就创建文件夹。
-                String fileDirPath = "src/main/resources/static/data/userdata/" +((NetUser) session.getAttribute("currentUser")).getUsername()+((NetFile)session.getAttribute("currentFile")).getFile_Path()+"/"+originalFileName;
+                String fileDirPath = "src/main/resources/static/data/userdata/" + ((NetUser) session.getAttribute("currentUser")).getUsername() + ((NetFile) session.getAttribute("currentFile")).getFile_Path() + "/" + originalFileName;
                 File fileDir = new File(fileDirPath);
                 if (!fileDir.exists()) {
                     // 递归生成文件夹
@@ -64,12 +64,14 @@ public class FileController {
                     // 构建真实的文件路径
                     File realFile = new File(fileDir.getAbsolutePath());
                     //输出文件路径。
-                    // 上传图片到 -》 “绝对路径”
+                    // 上传图片到绝对路径
                     upFile.transferTo(realFile);
                     //System.out.println("上传成功！");
                     //设置课程图片Logo。
                     newFile.setFileLocation(realFile.getAbsolutePath());
-                    fileService.addNewFile(newFile);
+                    fileService.addNewFile(newFile, ((NetUser) session.getAttribute("currentUser")).getUserId());
+                    NetUser currentUser = (NetUser) session.getAttribute("currentUser");
+                    currentUser.setDataSize(currentUser.getDataSize() + newFile.getFileSize());
                     return "上传成功！";
                 } catch (IOException e) {
                     System.out.println(e);
@@ -80,33 +82,82 @@ public class FileController {
     }
 
     //删
+    @GetMapping("/File/removeFile/{fileId}")
+    public String removeFile(@PathVariable(value = "fileId") int fileId, HttpSession session) {
+        try {
+            NetUser currentUser = (NetUser) session.getAttribute("currentUser");
+            NetFile reFile = fileService.getUserFileById(fileId);
+            currentUser.setDataSize(currentUser.getDataSize() - reFile.getFileSize());
+            session.setAttribute("currentUser", currentUser);
+            if (fileService.removeFile(reFile, currentUser.getUserId()))
+                return "彻底删除成功！";
+            else
+                return "彻底删除失败！";
+        } catch (Exception e) {
+            System.out.println(e);
+            return "彻底删除失败！";
+        }
+    }
 
 
     //改
     @GetMapping("/File/deleteFile/{fileId}")
-    public String deleteFile(@PathVariable(value = "fileId")int fileId){
-        if(fileService.deleteFile(fileId)){
+    public String deleteFile(@PathVariable(value = "fileId") int fileId) {
+        if (fileService.changeFileStatus(fileId, 1)) {
             return "删除文件成功！";
-        }else {
+        } else {
             return "删除失败！";
         }
+    }
+
+    @GetMapping("/File/restoreFile/{fileId}")
+    public String restoreFile(@PathVariable(value = "fileId") int fileId) {
+        if (fileService.changeFileStatus(fileId, 0)) {
+            return "恢复文件成功！";
+        } else {
+            return "恢复失败！";
+        }
+    }
+
+    @GetMapping("/File/home")
+    public boolean goHome(HttpSession session) {
+        NetUser currentUser = (NetUser) session.getAttribute("currentUser");
+        //设置根目录
+        NetFile currentFile = new NetFile();
+        currentFile.setFile_userId(currentUser.getUserId());
+        currentFile.setFileId(0);
+        currentFile.setFile_Path("/");
+        currentFile.setFileStatus(0);
+        session.setAttribute("currentFile", currentFile);
+        return true;
 
     }
 
-
+    @GetMapping("/File/getDeletedFile")
+    public boolean getDeleteFile(HttpSession session) {
+        try {
+            NetFile file = (NetFile) session.getAttribute("currentFile");
+            file.setFileStatus(1);
+            session.setAttribute("currentFile", file);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
 
     //查
     //刷新数据
     @GetMapping("/File/refreshData")
     public List<NetFile> refreshData(HttpSession session) {
-        return fileService.getUserFilesByParentId(((NetFile) session.getAttribute("currentFile")).getFileId(), ((NetUser) session.getAttribute("currentUser")).getUserId());
+        return fileService.getUserFilesByParentId(((NetFile) session.getAttribute("currentFile")).getFileId(), ((NetUser) session.getAttribute("currentUser")).getUserId(), ((NetFile) session.getAttribute("currentFile")).getFileStatus());
     }
 
     //设置新的currentFile
     @GetMapping("/File/refreshFile/{fileId}")
     public boolean refreshFile(@PathVariable("fileId") int fileId, HttpSession session) {
         try {
-            session.setAttribute("currentFile", fileService.getUserFileById(fileId, ((NetUser) session.getAttribute("currentUser")).getUserId()));
+            session.setAttribute("currentFile", fileService.getUserFileById(fileId));
             return true;
         } catch (Exception e) {
             return false;
@@ -127,7 +178,7 @@ public class FileController {
             session.setAttribute("currentFile", currentFile);
             return false;
         } else {
-            NetFile newCurrentFile = fileService.getUserFileById(currentFile.getFile_parentId(), ((NetUser) session.getAttribute("currentUser")).getUserId());
+            NetFile newCurrentFile = fileService.getUserFileById(currentFile.getFile_parentId());
             session.setAttribute("currentFile", newCurrentFile);
             return true;
         }

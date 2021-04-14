@@ -32,7 +32,7 @@ public class UserService {
 
     //删
 
-//改
+    //改
 
     //查
     public NetUser loginCheck(NetUser user) throws NoSuchAlgorithmException {
@@ -50,5 +50,6 @@ public class UserService {
             return userSelect;
         }
     }
+
 }
 

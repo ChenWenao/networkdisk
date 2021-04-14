@@ -59,9 +59,10 @@ public class UserController {
             session.setAttribute("currentUser", currentUser);
             //设置根目录
             NetFile currentFile = new NetFile();
-            currentFile.setFile_userId(currentFile.getUserId());
+            currentFile.setFile_userId(currentUser.getUserId());
             currentFile.setFileId(0);
             currentFile.setFile_Path("/");
+            currentFile.setFileStatus(0);
 
             session.setAttribute("currentFile", currentFile);
 
@@ -73,6 +74,7 @@ public class UserController {
     //获取当前用户
     @GetMapping("/User/getCurrentUser")
     public NetUser getCurrentUser(HttpSession session) {
+
         return (NetUser) session.getAttribute("currentUser");
     }
 

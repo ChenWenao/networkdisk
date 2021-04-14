@@ -32,7 +32,18 @@ public class UserRepository {
 
 
     //改
-
+public boolean updateUserSize(int userId,String operator,long dataSize){
+    try {
+        if ("+".equals(operator))
+            usertemplate.update("update networkdisk.user set dataSize =dataSize+ ? where userId=?",  dataSize, userId);
+        if ("-".equals(operator))
+            usertemplate.update("update networkdisk.user set dataSize =dataSize- ? where userId=?",  dataSize, userId);
+        return true;
+    } catch (Exception e) {
+        System.out.println(e);
+        return false;
+    }
+}
 
     //查
     public NetUser selectOneUser(NetUser user) {
@@ -45,5 +56,14 @@ public class UserRepository {
         }
     }
 
+    public NetUser selectUserByUserId(int userId){
+        try {
+            List<NetUser> userSelectResult = usertemplate.query("select * from user where userId=?", userRowMapper, userId);
+            return userSelectResult.get(0);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
 }

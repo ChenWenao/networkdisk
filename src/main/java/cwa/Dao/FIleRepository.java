@@ -41,9 +41,21 @@ public class FileRepository {
                     newFile.getFile_userId(),
                     newFile.getFile_parentId(),
                     newFile.getFile_Path());
-
             return true;
         } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    //删
+    public boolean deleteFile(NetFile reFile,int userId){
+        try {
+            filetemplate.update("update networkdisk.file set fileSize=fileSize-? where file_userId=? and INSTR(?,file_path)>0",reFile.getFileSize(),userId,reFile.getFile_Path());
+            filetemplate.update("delete from networkdisk.file where file_userId=? and file_path like ?",userId,reFile.getFile_Path()+"%");
+            filetemplate.update("delete from networkdisk.file where fileId=?",reFile.getFileId());
+            return true;
+        }catch (Exception e){
             System.out.println(e);
             return false;
         }
@@ -63,9 +75,9 @@ public class FileRepository {
         }
     }
 
-    public boolean setFileDeleted(int fileId){
+    public boolean setFileStatus(int fileId,int fileStauts){
         try {
-            filetemplate.update("update networkdisk.file set filestatus = 1 where fileId=?",fileId);
+            filetemplate.update("update networkdisk.file set filestatus = ? where fileId=?",fileStauts,fileId);
             return true;
         }catch (Exception e){
             System.out.println(e);
@@ -93,9 +105,14 @@ public class FileRepository {
     }
 
     //查某人(userId)的某个文件夹(fileId)下的文件列表
-    public List<NetFile> selectUserFilesByParentId(int fileId, int userId) {
+    public List<NetFile> selectUserFilesByParentId(int fileId, int userId,int fileStatus) {
         try {
-            List<NetFile> files = filetemplate.query("select * from file where file_parentId=? and file_userId=? and filestatus=0", fileRowMapper, fileId, userId);
+            List<NetFile> files=null;
+            if(fileStatus==0) {
+                files = filetemplate.query("select * from file where file_parentId=? and file_userId=? and filestatus=0", fileRowMapper, fileId, userId);
+            }else if(fileStatus==1){
+                files = filetemplate.query("select * from file where file_userId=? and filestatus=1", fileRowMapper, userId);
+            }
             return files;
         } catch (Exception e) {
             System.out.println(e);
@@ -103,10 +120,10 @@ public class FileRepository {
         }
     }
 
-    //根据id查某人(userId)的某个文件
-    public NetFile selectUserFileById(int fileId, int userId) {
+    //根据id查某个文件
+    public NetFile selectUserFileById(int fileId) {
         try {
-            List<NetFile> files = filetemplate.query("select * from file where fileId=? and file_userId=? and filestatus=0", fileRowMapper, fileId, userId);
+            List<NetFile> files = filetemplate.query("select * from file where fileId=? ", fileRowMapper, fileId);
             return files.get(0);
         } catch (Exception e) {
             System.out.println(e);

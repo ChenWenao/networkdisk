@@ -35,6 +35,9 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <form class="navbar-form navbar-left" role="search">
+                        <button class="btn btn-default" onclick="goHome()">
+                            首页
+                        </button>
                         <input class="form-control" type="text"/>
                         <button type="submit" class="btn btn-default">搜索（未完成）</button>
                     </form>
@@ -69,10 +72,14 @@
             </button>
             <form id="uploadFileForm">
                 <input type="file" id="uploadFileInput" name="upFile" onchange="uploadFile()" style="display:none"/>
-                <button type="button" onclick="chooseUpFile()" id="uploadFileButton" class="navbar-brand btn btn-default">
+                <button type="button" onclick="chooseUpFile()" id="uploadFileButton"
+                        class="navbar-brand btn btn-default">
                     上传文件
                 </button>
             </form>
+            <button class="navbar-brand btn btn-danger" onclick="getDeletedFile()">
+                回收站
+            </button>
 
             <div style="display: none;" class="progress-body col-lg-5  pull-right">
                 <div>
@@ -141,7 +148,8 @@
     <div class="modal-dialog">
         <div class="modal-content message_align">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
                 <h4 class="modal-title">提示信息</h4>
             </div>
             <div class="modal-body">
@@ -181,11 +189,11 @@
                     function (i, oneFile) {
                         $("#fileList").append(
                             "<tr>" +
-                            "<td><a onclick='clickFile(\"" + oneFile.fileId + "\",\"" + oneFile.fileType + "\")'>" + oneFile.fileName + "</a></td>"+
-                            "<td>" + oneFile.updateTime + "</td>"+
-                            "<td>" + oneFile.fileType + "</td>"+
+                            "<td><a onclick='clickFile(\"" + oneFile.fileId + "\",\"" + oneFile.fileType + "\")'>" + oneFile.fileName + "</a></td>" +
+                            "<td>" + oneFile.updateTime + "</td>" +
+                            "<td>" + oneFile.fileType + "</td>" +
                             "<td>" + (oneFile.fileSize / 1048576).toFixed(2) + "MB" + "</td>" +
-                            "<td><button type='button' class='btn btn-warning' onclick='deleteConfirm("+oneFile.fileId+")'>删除</button></td>"+
+                            "<td><button type='button' class='btn btn-warning' onclick='deleteConfirm(" + oneFile.fileId + ")'>删除</button></td>" +
                             "</tr>"
                         );
                     }
@@ -242,6 +250,59 @@
             }
         })
     }
+
+    //获取回收站
+    function getDeletedFile() {
+        $.ajax({
+                url: "/File/getDeletedFile",
+                type: 'GET',
+                success: function (data) {
+                    if (data == true) {
+                        $("#fileList").empty("");
+                        $.ajax({
+                            type: "get",
+                            url: "/File/refreshData",
+                            success: function (data) {
+                                $(data).each(
+                                    function (i, oneFile) {
+                                        $("#fileList").append(
+                                            "<tr>" +
+                                            "<td>" + oneFile.fileName + "</td>" +
+                                            "<td>" + oneFile.updateTime + "</td>" +
+                                            "<td>" + oneFile.fileType + "</td>" +
+                                            "<td>" + (oneFile.fileSize / 1048576).toFixed(2) + "MB" + "</td>" +
+                                            "<td><button type='button' class='btn btn-info' onclick='restoreFile(" + oneFile.fileId + ")'>恢复</button></td>" +
+                                            "<td><button type='button' class='btn btn-danger' onclick='removeFile(" + oneFile.fileId + ")'>彻底删除</button></td>" +
+                                            "</tr>"
+                                        );
+
+
+                                    }
+                                );
+                            },
+                        })
+                        $.ajax({
+                            type: "GET",
+                            url: "/File/getCurrentFile",
+                            success: function (data) {
+                                $("#currentPath").text(data.file_Path);
+                            },
+                        })
+                        $.ajax({
+                            type: "GET",
+                            url: "/User/getCurrentUser",
+                            success: function (data) {
+                                $("#releaseDateSize").text("剩余空间：" + ((data.dataMax - data.dataSize) / 1048576).toFixed(2) + " MB");
+                            },
+                        })
+                    } else {
+                        toastr.error("未知错误！");
+                    }
+                }
+            }
+        )
+    }
+
 
     //新建文件夹
     function newFileFold() {
@@ -405,13 +466,13 @@
     }
 
     //删除目标
-    function deleteConfirm(fileId){
+    function deleteConfirm(fileId) {
         $('#deleteFileId').val(fileId);
         $('#deleteConfirm').modal('show');
     }
 
-    function deleteFile(){
-        var fileId=$('#deleteFileId').val();
+    function deleteFile() {
+        var fileId = $('#deleteFileId').val();
         $('#deleteConfirm').modal('hide');
         $.ajax({
             url: '/File/deleteFile/' + fileId,
@@ -422,7 +483,41 @@
                 refreshData();
             }
         })
+    }
 
+    //永久删除文件                                                      未完成
+    function removeFile(fileId) {
+        $.ajax({
+            url: '/File/removeFile/' + fileId,
+            type: 'GET',
+            success: function (data) {
+                toastr.warning(data);
+                getDeletedFile();
+            }
+        })
+    }
+
+    //恢复文件
+    function restoreFile(fileId) {
+        $.ajax({
+            url: '/File/restoreFile/' + fileId,
+            type: 'GET',
+            success: function (data) {
+                toastr.warning(data);
+                refreshData();
+            }
+        })
+    }
+
+    //返回首页
+    function goHome() {
+        $.ajax({
+            url: '/File/home',
+            type: 'GET',
+            success: function (data) {
+                refreshData();
+            }
+        })
     }
 </script>
 </body>
