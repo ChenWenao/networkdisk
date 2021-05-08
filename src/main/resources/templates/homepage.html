@@ -38,8 +38,8 @@
                         <button class="btn btn-default" onclick="goHome()">
                             首页
                         </button>
-                        <input class="form-control" type="text"/>
-                        <button type="submit" class="btn btn-default">搜索（未完成）</button>
+                        <input class="form-control" type="text" id="searchFileName">
+                        <button type="button" onclick="searchFile()" class="btn btn-default">搜索</button>
                     </form>
                     <a class="list navbar-brand" id="currentPath"></a>
                     <ul class="nav navbar-nav navbar-right">
@@ -48,11 +48,6 @@
                                th:text="${currentUser.username}">
                                 <strong class="caret"></strong></a>
                             <ul class="dropdown-menu">
-                                <li class="divider">
-                                </li>
-                                <li>
-                                    <a href="#">购买额外空间（暂未完成）</a>
-                                </li>
                                 <li class="divider">
                                 </li>
                                 <li>
@@ -99,21 +94,11 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>
-                        名称
-                    </th>
-                    <th>
-                        修改日期
-                    </th>
-                    <th>
-                        类型
-                    </th>
-                    <th>
-                        大小
-                    </th>
-                    <th>
-
-                    </th>
+                    <th>名称</th>
+                    <th>修改日期</th>
+                    <th>类型</th>
+                    <th>大小</th>
+                    <th>操作</th>
                 </tr>
                 </thead>
                 <tbody id="fileList"></tbody>
@@ -140,8 +125,8 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" onclick="newFileFold()">新建</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="deleteConfirm">
@@ -164,374 +149,32 @@
     </div>
 </div>
 
+<div class="modal fade" id="shareFileBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <label class="modal-dialog-centered">请选择分享时长：</label>
 
-<script>
+            <div>
+                <label class="radio-inline">
+                    <input type="radio" name="shareFileDay" id="shareDay3" value=3 checked> 3 天
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="shareFileDay" id="shareDay7" value=7> 7 天
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="shareFileDay" id="shareDay30" value=30 checked> 30 天
+                </label>
 
-    //提示框初始化
-    toastr.options = {
-        positionClass: "toast-bottom-center",
-        timeOut: "3000",
-    };
-
-    window.onload = function () {
-        document.getElementById("goBackButton").disabled = true;
-        refreshData();
-    };
-
-    //刷新页面数据
-    function refreshData() {
-        $("#fileList").empty("");
-        $.ajax({
-            type: "get",
-            url: "/File/refreshData",
-            success: function (data) {
-                $(data).each(
-                    function (i, oneFile) {
-                        $("#fileList").append(
-                            "<tr>" +
-                            "<td><a onclick='clickFile(\"" + oneFile.fileId + "\",\"" + oneFile.fileType + "\")'>" + oneFile.fileName + "</a></td>" +
-                            "<td>" + oneFile.updateTime + "</td>" +
-                            "<td>" + oneFile.fileType + "</td>" +
-                            "<td>" + (oneFile.fileSize / 1048576).toFixed(2) + "MB" + "</td>" +
-                            "<td><button type='button' class='btn btn-info' onclick=\"window.open('/File/downloadFile/" + oneFile.fileId + "')\">下载</button></td>" +
-                            "<td><button type='button' class='btn btn-warning' onclick='deleteConfirm(" + oneFile.fileId + ")'>删除</button></td>" +
-                            "</tr>"
-                        );
-                    }
-                );
-            },
-        })
-        $.ajax({
-            type: "GET",
-            url: "/File/getCurrentFile",
-            success: function (data) {
-                $("#currentPath").text(data.file_Path);
-            },
-        })
-        $.ajax({
-            type: "GET",
-            url: "/User/getCurrentUser",
-            success: function (data) {
-                $("#releaseDateSize").text("剩余空间：" + ((data.dataMax - data.dataSize) / 1048576).toFixed(2) + " MB");
-            },
-        })
-
-    }
-
-    //登出
-    function logout() {
-        $.ajax({
-            url: 'logout',
-            type: 'GET',
-            success: function (data) {
-                if (data == true) {
-                    toastr.success("登出成功！")
-                    setTimeout("indexLogin()", 1500);
-                    window.location.reload();
-                } else {
-                    toastr.error("未知错误，登出失败！")
-                }
-            }
-        })
-    }
-
-    //返回
-    function goBack() {
-        $.ajax({
-            url: '/File/goBack',
-            type: 'GET',
-            success: function (data) {
-                if (data == true) {
-                    document.getElementById("goBackButton").disabled = false;
-                    refreshData();
-                } else {
-                    document.getElementById("goBackButton").disabled = true;
-                    refreshData();
-                }
-            }
-        })
-    }
-
-    //获取回收站
-    function getDeletedFile() {
-        $.ajax({
-                url: "/File/getDeletedFile",
-                type: 'GET',
-                success: function (data) {
-                    if (data == true) {
-                        $("#fileList").empty("");
-                        $.ajax({
-                            type: "get",
-                            url: "/File/refreshData",
-                            success: function (data) {
-                                $(data).each(
-                                    function (i, oneFile) {
-                                        $("#fileList").append(
-                                            "<tr>" +
-                                            "<td>" + oneFile.fileName + "</td>" +
-                                            "<td>" + oneFile.updateTime + "</td>" +
-                                            "<td>" + oneFile.fileType + "</td>" +
-                                            "<td>" + (oneFile.fileSize / 1048576).toFixed(2) + "MB" + "</td>" +
-                                            "<td><button type='button' class='btn btn-info' onclick='restoreFile(" + oneFile.fileId + ")'>恢复</button></td>" +
-                                            "<td><button type='button' class='btn btn-danger' onclick='removeFile(" + oneFile.fileId + ")'>彻底删除</button></td>" +
-                                            "</tr>"
-                                        );
-
-
-                                    }
-                                );
-                            },
-                        })
-                        $.ajax({
-                            type: "GET",
-                            url: "/File/getCurrentFile",
-                            success: function (data) {
-                                $("#currentPath").text(data.file_Path);
-                            },
-                        })
-                        $.ajax({
-                            type: "GET",
-                            url: "/User/getCurrentUser",
-                            success: function (data) {
-                                $("#releaseDateSize").text("剩余空间：" + ((data.dataMax - data.dataSize) / 1048576).toFixed(2) + " MB");
-                            },
-                        })
-                    } else {
-                        toastr.error("未知错误！");
-                    }
-                }
-            }
-        )
-    }
-
-
-    //新建文件夹
-    function newFileFold() {
-        const foldName = $('#newFileFoldName').val();
-        $('#newFileFoldName').val("");
-        if (foldName == "") {
-            $('#newFileFoldName').attr('placeholder', "名称不能为空！");
-        } else {
-            $.ajax({
-                url: '/File/newFileFold/' + foldName,
-                type: 'GET',
-                success: function (data) {
-                    if (data == true) {
-                        $('#newFileFoldName').attr('placeholder', "请输入文件夹名称！");
-                        $('#newFoldBox').modal('hide');
-                        toastr.success("新建文件夹成功！");
-                        refreshData();
-                    } else {
-                        $('#newFileFoldName').attr('placeholder', "文件夹已存在！");
-                    }
-                }
-            })
-        }
-    }
-
-    function chooseUpFile() {
-        document.getElementById("uploadFileInput").click();
-    }
-
-    // 上传文件
-    function uploadFile() {
-        const checkFile = $("#uploadFileInput").val();
-        var dataRelease=0;
-        if (null == checkFile || "" == checkFile) {
-            toastr.warning("文件为空,请选择文件！");
-            return;
-        } else {
-            //获取剩余空间
-            $.ajax({
-                type: "GET",
-                url: "/User/getCurrentUser",
-                success: function (data) {
-                    dataRelease=data.dataMax-data.dataSize;
-                },
-            })
-            if ($("#uploadFileInput")[0].files[0].size > dataRelease) {
-                toastr.warning("剩余空间不足！");
-                return;
-            } else {
-                const formData = new FormData(document.getElementById("uploadFileForm"));
-                $.ajax({
-                    type: "POST",
-                    enctype: 'multipart/form-data',
-                    url: '/File/uploadFile',
-                    data: formData,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    success: function (data) {
-                        if (data == "请上传一个文件！") {
-                            toastr.warning(data);
-                            $('#uploadFileInput').val('');
-                            return;
-                        } else if (data == "当前文件已存在！") {
-                            toastr.warning(data);
-                            $('#uploadFileInput').val('');
-                            return;
-                        } else if (data == "上传成功！") {
-                            toastr.success(data);
-                            $('#uploadFileInput').val('');
-                            refreshData();
-                            return;
-                        } else {
-                            $('#uploadFileInput').val('');
-                            toastr.error(data);
-                            return;
-                        }
-
-                    },
-                    xhr: function () {
-                        var xhr = $.ajaxSettings.xhr();
-                        if (xhr.upload) {
-                            //处理进度条的事件
-                            xhr.upload.addEventListener("progress", progressHandle, false);
-                            //加载完成的事件
-                            xhr.addEventListener("load", completeHandle, false);
-                            //加载出错的事件
-                            xhr.addEventListener("error", failedHandle, false);
-                            //加载取消的事件
-                            xhr.addEventListener("abort", canceledHandle, false);
-                            //开始显示进度条
-                            showProgress();
-                            return xhr;
-                        }
-                    }
-                }, 'json');
-            }
-        }
-    }
-
-    var start = 0;
-
-    //显示进度条的函数
-    function showProgress() {
-        start = new Date().getTime();
-        $(".progress-body").css("display", "block");
-    }
-
-    //隐藏进度条的函数
-    function hideProgress() {
-        $('.progress-body .progress-speed').html("0 M/S, 0/0M");
-        $('.progress-body percentage').html("0%");
-        $('.progress-body .progress-info').html("请选择文件并点击上传文件按钮");
-        $(".progress-body").css("display", "none");
-    }
-
-    //进度条更新
-    function progressHandle(e) {
-        $('.progress-body progress').attr({value: e.loaded, max: e.total});
-        var percent = e.loaded / e.total * 100;
-        var time = ((new Date().getTime() - start) / 1000).toFixed(3);
-        if (time == 0) {
-            time = 1;
-        }
-        $('.progress-body .progress-speed').html(((e.loaded / 1024) / 1024 / time).toFixed(2) + "M/S, " + ((e.loaded / 1024) / 1024).toFixed(2) + "/" + ((e.total / 1024) / 1024).toFixed(2) + " MB. ");
-        $('.progress-body percentage').html(percent.toFixed(2) + "%");
-        if (percent == 100) {
-            $('.progress-body .progress-info').html("上传完成,后台正在处理...");
-        } else {
-            $('.progress-body .progress-info').html("文件上传中...");
-        }
-    }
-
-    //上传完成处理函数
-    function completeHandle(e) {
-        $('.progress-body .progress-info').html("上传文件完成。");
-        setTimeout(hideProgress, 2000);
-    }
-
-    //上传出错处理函数
-    function failedHandle(e) {
-        $('.progress-body .progress-info').html("上传文件出错, 服务不可用或文件过大。");
-    }
-
-    //上传取消处理函数
-    function canceledHandle(e) {
-        $('.progress-body .progress-info').html("上传文件取消。");
-    }
-
-
-    //访问目标
-    function clickFile(fileId, fileType) {
-        if (fileType == '文件夹') {
-            // 访问的是文件夹
-            $.ajax({
-                url: '/File/refreshFile/' + fileId,
-                type: 'GET',
-                success: function (data) {
-                    if (data == true) {
-                        document.getElementById("goBackButton").disabled = false;
-                        refreshData();
-                    } else {
-                        alert("访问文件夹失败！")
-                    }
-                }
-            })
-        } else {
-            //访问的是文件
-
-
-        }
-    }
-
-    //删除目标
-    function deleteConfirm(fileId) {
-        $('#deleteFileId').val(fileId);
-        $('#deleteConfirm').modal('show');
-    }
-
-    function deleteFile() {
-        var fileId = $('#deleteFileId').val();
-        $('#deleteConfirm').modal('hide');
-        $.ajax({
-            url: '/File/deleteFile/' + fileId,
-            type: 'GET',
-            success: function (data) {
-                toastr.warning(data);
-                $('#deleteFileId').val("");
-                refreshData();
-            }
-        })
-    }
-
-    //永久删除文件                                                      未完成
-    function removeFile(fileId) {
-        $.ajax({
-            url: '/File/removeFile/' + fileId,
-            type: 'GET',
-            success: function (data) {
-                toastr.warning(data);
-                getDeletedFile();
-            }
-        })
-    }
-
-    //恢复文件
-    function restoreFile(fileId) {
-        $.ajax({
-            url: '/File/restoreFile/' + fileId,
-            type: 'GET',
-            success: function (data) {
-                toastr.warning(data);
-                refreshData();
-            }
-        })
-    }
-
-
-    //返回首页
-    function goHome() {
-        $.ajax({
-            url: '/File/home',
-            type: 'GET',
-            success: function (data) {
-                refreshData();
-            }
-        })
-    }
+                <div class="modal-footer">
+                    <input id="shareId" type="hidden"></input>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <a onclick="shareFileSubmit()" class="btn btn-success" data-dismiss="modal">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/fileJavaScript.js">
 </script>
 </body>
 </html>

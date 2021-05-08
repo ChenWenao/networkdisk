@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Detail</title>
+
+    <!-- Bootstrap -->
+    <link href="http://cdn.bootstrapmb.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- css -->
+    <link href="/css/main.css" rel="stylesheet">
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
+    <style>
+        .col-center-block {
+            float: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+<!-- 内容区域 -->
+<section class="section-padding-2" style="
+    background-repeat: no-repeat;
+	background-size: auto;
+	transition: all 0.5s;
+    background-image: radial-gradient( paleturquoise,#d3dae9);">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="post-details">
+                    <br>
+                    <h1 style="color: darkslateblue">文件详情</h1>
+                    <br>
+                    <br>
+                    <hr>
+                    <hr>
+                    <h4>文件名称：</h4><p th:text="${shareFile.fileName}"></p>
+                    <hr>
+                    <h4>上传日期：</h4><p th:text="${shareFile.uploadTime}"></p>
+                    <hr>
+                    <h4>文件类型：</h4><p th:text="${shareFile.fileType}"></p>
+                    <hr>
+                    <h4>文件大小(字节)：</h4><p th:text="${shareFile.fileSize}"></p>
+                    <hr>
+                    <hr>
+                    <h4>所属用户：</h4><p th:text="${shareFile.userName}"></p>
+                    <hr>
+                    <h4>分享时间：</h4><p th:text="${shareFile.shareTime}"></p>
+                    <hr>
+                    <h4>分享时长(天)：</h4><p th:text="${shareFile.shareLifeTime}"></p>
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <br><br><br>
+                <button type='button' class='btn btn-info' onclick=window.open("/File/downloadFile/"+oneFile.fileId)>下载</button>
+                <br>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="/js/fileJavaScript.js">
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    //这个方法是在访问接口之前执行。
+    //访问接口之前执行。
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         NetUser currentUser = (NetUser) session.getAttribute("currentUser");

@@ -6,6 +6,7 @@ import cwa.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,7 +67,6 @@ public class FileController {
                 try {
                     // 构建真实的文件路径
                     File realFile = new File(fileDir.getAbsolutePath());
-                    //输出文件路径。
                     // 上传图片到绝对路径
                     upFile.transferTo(realFile);
                     //System.out.println("上传成功！");
@@ -112,6 +112,8 @@ public class FileController {
             return "删除失败！";
         }
     }
+
+
 
     @GetMapping("/File/restoreFile/{fileId}")
     public String restoreFile(@PathVariable(value = "fileId") int fileId) {
@@ -193,6 +195,11 @@ public class FileController {
         return (NetFile) session.getAttribute("currentFile");
     }
 
+
+    @GetMapping("/File/searchFile/{fileName}")
+        public List<NetFile> searchFile(@PathVariable(value = "fileName")String seFileName, HttpSession session){
+        return fileService.searchUserFileByFileName(((NetUser) session.getAttribute("currentUser")).getUserId(),seFileName);
+    }
     //下载文件
     @GetMapping("/File/downloadFile/{downloadId}")
     public String downloadFile(@PathVariable("downloadId") int downId, HttpServletResponse response, HttpSession session) {
@@ -203,7 +210,6 @@ public class FileController {
             String fileName = downFile.getFileName() + "." + downFile.getFileType();
             //设置文件路径
             String realPath = downFile.getFileLocation().substring(0, downFile.getFileLocation().lastIndexOf('\\'));
-
             File file = new File(realPath + '/' + fileName);
             if (!file.exists()) {
                 return "下载文件不存在";
@@ -228,5 +234,15 @@ public class FileController {
             return "下载成功";
         }
     }
+
+    @GetMapping("/File/fileDetail/{fileId}")
+    public ModelAndView fileDetail(@PathVariable(value = "fileId")int fileId){
+        ModelAndView mav=new ModelAndView();
+        NetFile netFile=fileService.getUserFileById(fileId);
+        mav.setViewName("filedetail");
+        mav.addObject("netFile",netFile);
+        return mav;
+    }
+
 }
 

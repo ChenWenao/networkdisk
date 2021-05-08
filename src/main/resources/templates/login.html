@@ -23,20 +23,25 @@
                 <span>密码</span>
                 <input id="logPassword" name="password"/>
             </label>
-            <p class="forgot-pass"><a href="/OnlineCommunity/login/passwordBack">忘记密码？</a></p>
-
             <button type="button" class="submit" onclick="login()">登 录</button>
+        </form>
+        <form id="shareFile" name="shareForm">
+            <label>
+                <span>分享码</span>
+                <input id="shareCode" name="shareCode"/>
+            </label>
+            <button type="button" class="submit" onclick="getShareFile()">提 取</button>
         </form>
     </div>
     <div class="sub-cont">
         <div class="img">
             <div class="img__text m--up">
                 <h2>还未注册？</h2>
-                <p>立即注册，加入我们吧！</p>
+                <p>立即注册！</p>
             </div>
             <div class="img__text m--in">
                 <h2>已有帐号？</h2>
-                <p>有帐号就登录吧，好久不见了！</p>
+                <p>欢迎登录！</p>
             </div>
             <div class="img__btn">
                 <span id="registerBar" class="m--up">注 册</span>
@@ -147,6 +152,20 @@
         })
     }
 
+    function getShareFile(){
+        var shareCode=$("#shareCode").val();
+        $.ajax({
+            url:'/Share/shareFile/'+shareCode,
+            type:'GET',
+            success:function (data){
+                if(data==false){
+                    toastr.error("提取码有误！");
+                }else{
+                    window.location.href = "/Share/sharePage/"+shareCode;
+                }
+            }
+        })
+    }
 
 
 </script>

@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 
 public class FileRowMapper implements RowMapper<NetFile> {
-
     @Override
     public NetFile mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         NetFile file = new NetFile();

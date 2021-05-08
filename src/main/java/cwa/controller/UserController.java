@@ -63,9 +63,7 @@ public class UserController {
             currentFile.setFileId(0);
             currentFile.setFile_Path("/");
             currentFile.setFileStatus(0);
-
             session.setAttribute("currentFile", currentFile);
-
             return true;
         } else
             return false;
@@ -74,7 +72,6 @@ public class UserController {
     //获取当前用户
     @GetMapping("/User/getCurrentUser")
     public NetUser getCurrentUser(HttpSession session) {
-
         return (NetUser) session.getAttribute("currentUser");
     }
 

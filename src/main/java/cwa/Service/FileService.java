@@ -82,7 +82,7 @@ public class FileService {
 
 
     //删除文件
-    private static boolean deleteDir(File dir) {
+    public boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             //递归删除目录中的子目录下
@@ -95,6 +95,11 @@ public class FileService {
         }
         // 目录此时为空，可以删除
         return dir.delete();
+    }
+
+    //搜索某人的文件
+    public List<NetFile> searchUserFileByFileName(int userId,String seFileName){
+        return fileRepository.selectUserFileByFileName(userId, seFileName);
     }
 
 }

@@ -131,4 +131,17 @@ public class FileRepository {
         }
     }
 
+    //查某人userId的文件名包括seFileName的文件
+    public List<NetFile> selectUserFileByFileName(int userId,String seFileName){
+        try {
+            List<NetFile> netFiles=null;
+            String sql="select * from file where file_userId="+userId+" and filename like '%"+seFileName+"%'";
+            netFiles=filetemplate.query(sql,fileRowMapper);
+            return netFiles;
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
 }

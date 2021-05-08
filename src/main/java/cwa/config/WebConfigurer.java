@@ -28,6 +28,7 @@ public class WebConfigurer implements WebMvcConfigurer {
         registration.addPathPatterns("/User/**");
         registration.excludePathPatterns("/User/login");
         registration.excludePathPatterns("/User/register");
+        registration.excludePathPatterns("/Share/**");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
 }
